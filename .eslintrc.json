@@ -53,7 +53,12 @@
     "rules": {
         "object-curly-newline": "off",
         "import/prefer-default-export": "off",
-        "prettier/prettier": "error",
+        "prettier/prettier": [
+            "error",
+            {
+                "endOfLine": "auto"
+            }
+        ],
         "indent": ["error", 4, { "SwitchCase": 1 }],
         "quotes": ["error", "double", { "allowTemplateLiterals": true }],
         "camelcase": ["off", { "properties": "never" }],
@@ -106,6 +111,7 @@
         ],
         "no-underscore-dangle": "off",
         "@next/next/no-html-link-for-pages": "error",
-        "no-multi-assign": "off"
+        "no-multi-assign": "off",
+        "linebreak-style": 0
     }
 }

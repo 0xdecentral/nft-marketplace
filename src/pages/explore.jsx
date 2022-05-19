@@ -24,7 +24,6 @@ const Home02 = () => (
                     },
                     products: productData,
                 }}
-                hasFilter={true}
             />
         </main>
         <Footer />
