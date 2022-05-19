@@ -21,7 +21,7 @@ function reducer(state, action) {
     }
 }
 
-const ExploreProductArea = ({ className, space, data }) => {
+const ExploreProductArea = ({ className, space, data, hasFilter }) => {
     const itemsToFilter = [...data.products];
     const [state, dispatch] = useReducer(reducer, {
         filterToggle: false,
@@ -109,12 +109,14 @@ const ExploreProductArea = ({ className, space, data }) => {
                             />
                         )}
                     </div>
-                    <div className="col-lg-6 col-md-6 col-sm-6 col-12 mt_mobile--15">
-                        <FilterButton
-                            open={state.filterToggle}
-                            onClick={filterHandler}
-                        />
-                    </div>
+                    {hasFilter && (
+                        <div className="col-lg-6 col-md-6 col-sm-6 col-12 mt_mobile--15">
+                            <FilterButton
+                                open={state.filterToggle}
+                                onClick={filterHandler}
+                            />
+                        </div>
+                    )}
                 </div>
 
                 <ProductFilter
@@ -169,6 +171,7 @@ ExploreProductArea.propTypes = {
 
 ExploreProductArea.defaultProps = {
     space: 1,
+    hasFilter: true,
 };
 
 export default ExploreProductArea;

@@ -65,6 +65,7 @@ const Home = () => {
                         ...content["explore-product-section"],
                         products: productData,
                     }}
+                    hasFilter={false}
                 />
                 <CollectionArea
                     data={{

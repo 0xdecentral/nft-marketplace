@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Anchor from "@ui/anchor";
-import { useMoralis } from "react-moralis";
+import { useUser } from "src/contexts/UserContext";
 
 const UserDropdown = () => {
-    const { logout } = useMoralis();
+    const { disconnect } = useUser();
+
     return (
         <div className="icon-box">
             <Anchor path="/author">
@@ -20,61 +21,26 @@ const UserDropdown = () => {
                     <h4 className="title">
                         <Anchor path="/product">Christopher William</Anchor>
                     </h4>
-                    <span>
-                        <Anchor path="/product">Set Display Name</Anchor>
-                    </span>
                 </div>
                 <div className="rn-product-inner">
                     <ul className="product-list">
                         <li className="single-product-list">
                             <div className="thumbnail">
-                                <Anchor path="/product">
-                                    <Image
-                                        src="/images/portfolio/portfolio-07.jpg"
-                                        alt="Nft Product Images"
-                                        layout="fixed"
-                                        width={50}
-                                        height={50}
-                                    />
-                                </Anchor>
+                                <Image
+                                    src="https://assets-cdn.trustwallet.com/blockchains/ethereum/info/logo.png"
+                                    alt="Nft Product Images"
+                                    layout="fixed"
+                                    width={50}
+                                    height={50}
+                                />
                             </div>
                             <div className="content">
-                                <h6 className="title">
-                                    <Anchor path="/product">Balance</Anchor>
-                                </h6>
-                                <span className="price">25 ETH</span>
-                            </div>
-                            <div className="button" />
-                        </li>
-                        <li className="single-product-list">
-                            <div className="thumbnail">
-                                <Anchor path="/product">
-                                    <Image
-                                        src="/images/portfolio/portfolio-01.jpg"
-                                        alt="Nft Product Images"
-                                        layout="fixed"
-                                        width={50}
-                                        height={50}
-                                    />
-                                </Anchor>
-                            </div>
-                            <div className="content">
-                                <h6 className="title">
-                                    <Anchor path="/product">Balance</Anchor>
-                                </h6>
+                                <h6 className="title">Balance</h6>
                                 <span className="price">25 ETH</span>
                             </div>
                             <div className="button" />
                         </li>
                     </ul>
-                </div>
-                <div className="add-fund-button mt--20 pb--20">
-                    <Anchor
-                        className="btn btn-primary-alta w-100"
-                        path="/connect"
-                    >
-                        Add Your More Funds
-                    </Anchor>
                 </div>
                 <ul className="list-inner">
                     <li>
@@ -84,10 +50,7 @@ const UserDropdown = () => {
                         <Anchor path="/edit-profile">Edit Profile</Anchor>
                     </li>
                     <li>
-                        <Anchor path="/connect">Manage funds</Anchor>
-                    </li>
-                    <li>
-                        <button type="button" onClick={logout}>
+                        <button type="button" onClick={disconnect}>
                             Sign Out
                         </button>
                     </li>

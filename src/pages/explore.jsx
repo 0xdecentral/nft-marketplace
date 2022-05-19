@@ -3,7 +3,7 @@ import Wrapper from "@layout/wrapper";
 import Header from "@layout/header/header-01";
 import Footer from "@layout/footer/footer-01";
 import Breadcrumb from "@components/breadcrumb";
-import ExploreProductArea from "@containers/explore-product/layout-08";
+import ExploreProductArea from "@containers/explore-product/layout-01";
 
 // Demo data
 import productData from "../data/products.json";
@@ -14,14 +14,17 @@ export async function getStaticProps() {
 
 const Home02 = () => (
     <Wrapper>
-        <SEO pageTitle="Explore Simple" />
+        <SEO pageTitle="Explore Filter" />
         <Header />
         <main id="main-content">
-            <Breadcrumb pageTitle="Explore Simple" currentPage="Simple" />
             <ExploreProductArea
                 data={{
+                    section_title: {
+                        title: "Explore Product",
+                    },
                     products: productData,
                 }}
+                hasFilter={true}
             />
         </main>
         <Footer />

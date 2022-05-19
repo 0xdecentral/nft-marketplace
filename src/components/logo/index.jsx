@@ -5,7 +5,7 @@ import clsx from "clsx";
 
 const Logo = ({ className, logo }) => (
     <div className={clsx("logo-thumbnail logo-custom-css", className)}>
-        {logo?.[0]?.src && (
+        {/* {logo?.[0]?.src && (
             <Anchor className="logo-light" path="/">
                 <Image
                     src={logo[0].src}
@@ -24,7 +24,10 @@ const Logo = ({ className, logo }) => (
                     height={35}
                 />
             </Anchor>
-        )}
+        )} */}
+        <Anchor path="/">
+            <p>Logo</p>
+        </Anchor>
     </div>
 );
 

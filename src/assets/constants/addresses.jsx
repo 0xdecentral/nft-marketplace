@@ -1,0 +1,4 @@
+export const ContractAddress = {
+    MARKETPLACE: "0x2a16bBD6f197BF245EbB23EC4664c8A354Ff5f1F",
+    TOKEN: "0xc813EA5e3b48BEbeedb796ab42A30C5599b01740",
+};

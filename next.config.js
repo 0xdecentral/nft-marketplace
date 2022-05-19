@@ -15,4 +15,7 @@ module.exports = {
         ];
         return config;
     },
+    images: {
+        domains: ["assets-cdn.trustwallet.com"],
+    },
 };

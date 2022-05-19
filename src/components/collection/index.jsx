@@ -22,7 +22,7 @@ const Collection = ({
                     />
                 </div>
             )}
-            <div className="collenction-small-thumbnail">
+            {/* <div className="collenction-small-thumbnail">
                 {thumbnails?.map((thumb, i) => (
                     // eslint-disable-next-line react/no-array-index-key
                     <div key={i}>
@@ -34,7 +34,7 @@ const Collection = ({
                         />
                     </div>
                 ))}
-            </div>
+            </div> */}
             {profile_image?.src && (
                 <div className="collection-profile">
                     <Image
