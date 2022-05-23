@@ -39,7 +39,7 @@ const RankingArea = ({ className, space, data }) => {
                     <div className="col-12">
                         <div className="table-title-area d-flex">
                             <i className="feather-briefcase" />
-                            <h3>The top NFTs on Nuron</h3>
+                            <h3>The top NFTs</h3>
                         </div>
                         <div className="box-table table-responsive">
                             <table className="table upcoming-projects">

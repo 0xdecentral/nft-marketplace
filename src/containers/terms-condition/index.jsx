@@ -14,7 +14,7 @@ const TermsAndConditionsArea = ({ className, space }) => (
             <div className="row">
                 <div className="offset-lg-2 col-lg-8 ">
                     <div className="condition-wrapper">
-                        <h2>NFT Bidding Terms & Condition of Nuron</h2>
+                        <h2>NFT Bidding Terms & Condition</h2>
                         <p>
                             It could be a house, or a painting such as the Mona
                             Lisa, which is one of a kind. You can take a photo
@@ -56,7 +56,7 @@ const TermsAndConditionsArea = ({ className, space }) => (
                             extremely important.
                         </p>
 
-                        <h2>Selling Condition Tearms & Condition of Nuron</h2>
+                        <h2>Selling Condition Tearms & Condition</h2>
                         <p>
                             Just kidding. The previous paragraph is a parody (if
                             such is possible) of the hype that in the first half
@@ -83,7 +83,7 @@ const TermsAndConditionsArea = ({ className, space }) => (
                             another NFT.
                         </p>
 
-                        <h2>NFT Bidding Terms & Condition of Nuron</h2>
+                        <h2>NFT Bidding Terms & Condition</h2>
                         <p>
                             Warren Buffett famously remarked in 2018 that
                             Bitcoin (and by implication all cryptocurrencies)
@@ -124,7 +124,7 @@ const TermsAndConditionsArea = ({ className, space }) => (
                             extremely important.
                         </p>
 
-                        <h2>Buying NFT&apos;s Terms & Condition of Nuron</h2>
+                        <h2>Buying NFT&apos;s Terms & Condition</h2>
                         <p>
                             The importance of NFTs lies in providing the ability
                             to securely value, purchase and exchange digital art

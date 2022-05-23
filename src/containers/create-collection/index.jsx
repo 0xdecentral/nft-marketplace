@@ -143,9 +143,8 @@ const CreateCollectionArea = () => {
                             <div className="collection-single-wized">
                                 <h6 className="title">URL</h6>
                                 <span className="sub">
-                                    Customize your URL on Nuron. Must only
-                                    contain lowercase letters,numbers, and
-                                    hyphens.
+                                    Customize your URL. Must only contain
+                                    lowercase letters,numbers, and hyphens.
                                 </span>
                                 <div className="create-collection-input">
                                     <input
@@ -187,7 +186,7 @@ const CreateCollectionArea = () => {
                                 <h6 className="title">Category</h6>
                                 <span className="sub">
                                     Adding a category will help make your item
-                                    discoverable on Nuron.
+                                    discoverable.
                                 </span>
                                 <div className="create-collection-input">
                                     <NiceSelect

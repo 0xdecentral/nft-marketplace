@@ -26,7 +26,7 @@
         {
             "section": "quote-section",
             "section_title": {
-                "title": "Create, Sell well & Collect your Wonderful NFTs at Nuron Very Fast"
+                "title": "Create, Sell well & Collect your Wonderful NFTs"
             },
             "texts": [
                 {
@@ -38,12 +38,12 @@
         {
             "section": "funfact-section",
             "section_title": {
-                "title": "Nuron Statistics"
+                "title": "Statistics"
             },
             "funfacts": [
                 {
                     "id": 1,
-                    "title": "Nuron All NFT's",
+                    "title": "All NFT's",
                     "counter": 100
                 },
                 {
@@ -54,7 +54,7 @@
                 },
                 {
                     "id": 3,
-                    "title": "Nuron Earning",
+                    "title": "Earning",
                     "counter": 700
                 },
                 {
