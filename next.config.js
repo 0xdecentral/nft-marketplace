@@ -16,6 +16,6 @@ module.exports = {
         return config;
     },
     images: {
-        domains: ["assets-cdn.trustwallet.com"],
+        domains: ["assets-cdn.trustwallet.com", "ipfs.infura.io"],
     },
 };

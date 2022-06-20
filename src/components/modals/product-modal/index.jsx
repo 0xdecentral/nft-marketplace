@@ -31,7 +31,7 @@ const ProductModal = ({ show, handleModal, data }) => (
                     currency: "wETH",
                 }}
                 likeCount={300}
-                image={{ src: URL.createObjectURL(data.image) }}
+                image={{ src: `https://ipfs.infura.io/ipfs/${data.image}` }}
                 authors={[
                     {
                         name: "Mark Jordan",

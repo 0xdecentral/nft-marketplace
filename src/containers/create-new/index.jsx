@@ -7,12 +7,27 @@ import Button from "@ui/button";
 import ProductModal from "@components/modals/product-modal";
 import ErrorText from "@ui/error-text";
 import { toast } from "react-toastify";
+import { create } from "ipfs-http-client";
+import { useEthereum } from "src/contexts/EthereumContext";
+
+const projectId = "2AV5zpklOWMZTeOM655tlEONPnj";
+const projectSecret = "373ca3c12a0fb3555dc913e7ff2ee356";
+const authorization =
+    "Basic " + Buffer.from(projectId + ":" + projectSecret).toString("base64");
+
+const client = create({
+    url: "https://ipfs.infura.io:5001",
+    headers: {
+        authorization,
+    },
+});
 
 const CreateNewArea = ({ className, space }) => {
     const [showProductModal, setShowProductModal] = useState(false);
-    const [selectedImage, setSelectedImage] = useState();
+    const [imageCID, setImageCID] = useState();
     const [hasImageError, setHasImageError] = useState(false);
     const [previewData, setPreviewData] = useState({});
+    const { erc1155Contract } = useEthereum();
 
     const {
         register,
@@ -29,27 +44,68 @@ const CreateNewArea = ({ className, space }) => {
     };
 
     // This function will be triggered when the file field change
-    const imageChange = (e) => {
-        if (e.target.files && e.target.files.length > 0) {
-            setSelectedImage(e.target.files[0]);
-        }
-    };
+    // const imageChange = (e) => {
+    //     if (e.target.files && e.target.files.length > 0) {
+    //         setSelectedImage(e.target.files[0]);
+    //     }
+    // };
 
-    const onSubmit = (data, e) => {
-        const { target } = e;
-        const submitBtn =
-            target.localName === "span" ? target.parentElement : target;
-        const isPreviewBtn = submitBtn.dataset?.btn;
-        setHasImageError(!selectedImage);
-        if (isPreviewBtn && selectedImage) {
-            setPreviewData({ ...data, image: selectedImage });
-            setShowProductModal(true);
+    async function imageChange(e) {
+        const file = e.target.files[0];
+        try {
+            const added = await client.add(file, {
+                progress: (prog) => console.log(`received: ${prog}`),
+            });
+            setImageCID(added.path);
+        } catch (error) {
+            console.log("Error uploading file: ", error);
         }
-        if (!isPreviewBtn) {
-            notify();
-            reset();
-            setSelectedImage();
+    }
+
+    const onSubmit = async (data, e) => {
+        // const { target } = e;
+        // const submitBtn =
+        //     target.localName === "span" ? target.parentElement : target;
+        // const isPreviewBtn = submitBtn.dataset?.btn;
+
+        setHasImageError(!imageCID);
+
+        try {
+            let metadataCID;
+
+            try {
+                const file = JSON.stringify(data);
+                const added = await client.add(file, {
+                    progress: (prog) => console.log(`received: ${prog}`),
+                });
+
+                metadataCID = added.path;
+            } catch (error) {
+                console.log("Error uploading file: ", error);
+            }
+
+            if (metadataCID) {
+                const tx = await erc1155Contract.mint(
+                    metadataCID,
+                    data.amount,
+                    "0x"
+                );
+
+                await tx.wait();
+            }
+        } catch (error) {
+            console.log("Erorr minting NFT");
         }
+
+        // if (isPreviewBtn && imageCID) {
+        //     setPreviewData({ ...data, image: imageCID });
+        //     setShowProductModal(true);
+        // }
+        // if (!isPreviewBtn) {
+        //     notify();
+        //     reset();
+        //     setImageCID();
+        // }
     };
 
     return (
@@ -65,7 +121,7 @@ const CreateNewArea = ({ className, space }) => {
                     <div className="container">
                         <div className="row g-5">
                             <div className="col-lg-3 offset-1 ml_md--0 ml_sm--0">
-                                <div className="upload-area">
+                                <div className="upload-area mb--200">
                                     <div className="upload-formate mb--30">
                                         <h6 className="title">Upload file</h6>
                                         <p className="formate">
@@ -83,12 +139,10 @@ const CreateNewArea = ({ className, space }) => {
                                             multiple
                                             onChange={imageChange}
                                         />
-                                        {selectedImage && (
+                                        {imageCID && (
                                             <img
                                                 id="createfileImage"
-                                                src={URL.createObjectURL(
-                                                    selectedImage
-                                                )}
+                                                src={`https://ipfs.infura.io/ipfs/${imageCID}`}
                                                 alt=""
                                                 data-black-overlay="6"
                                             />
@@ -108,12 +162,12 @@ const CreateNewArea = ({ className, space }) => {
                                             </p>
                                         </label>
                                     </div>
-                                    {hasImageError && !selectedImage && (
+                                    {hasImageError && !imageCID && (
                                         <ErrorText>Image is required</ErrorText>
                                     )}
                                 </div>
 
-                                <div className="mt--100 mt_sm--30 mt_md--30 d-none d-lg-block">
+                                {/* <div className="mt--100 mt_sm--30 mt_md--30 d-none d-lg-block">
                                     <h5> Note: </h5>
                                     <span>
                                         {" "}
@@ -125,7 +179,7 @@ const CreateNewArea = ({ className, space }) => {
                                         You will receive :{" "}
                                         <strong>25.00 ETH $50,000</strong>
                                     </span>
-                                </div>
+                                </div> */}
                             </div>
                             <div className="col-lg-7">
                                 <div className="form-wrapper-one">
@@ -185,7 +239,8 @@ const CreateNewArea = ({ className, space }) => {
                                             </div>
                                         </div>
 
-                                        <div className="col-md-4">
+                                        {
+                                            /* <div className="col-md-4">
                                             <div className="input-box pb--20">
                                                 <label
                                                     htmlFor="price"
@@ -263,36 +318,37 @@ const CreateNewArea = ({ className, space }) => {
                                                     </ErrorText>
                                                 )}
                                             </div>
-                                        </div>
+                                        </div> */
 
-                                        <div className="col-md-12">
-                                            <div className="input-box pb--20">
-                                                <label
-                                                    htmlFor="Royality"
-                                                    className="form-label"
-                                                >
-                                                    Royality
-                                                </label>
-                                                <input
-                                                    id="royality"
-                                                    placeholder="e. g. `20%`"
-                                                    {...register("royality", {
-                                                        required:
-                                                            "Royality is required",
-                                                    })}
-                                                />
-                                                {errors.royality && (
-                                                    <ErrorText>
-                                                        {
-                                                            errors.royality
-                                                                ?.message
-                                                        }
-                                                    </ErrorText>
-                                                )}
+                                            <div className="col-md-12">
+                                                <div className="input-box pb--20">
+                                                    <label
+                                                        htmlFor="1155"
+                                                        className="form-label"
+                                                    >
+                                                        Amount
+                                                    </label>
+                                                    <input
+                                                        id="amount"
+                                                        placeholder="Default: 1"
+                                                        defaultValue={1}
+                                                        {...register("amount", {
+                                                            required:
+                                                                "Amount is required",
+                                                        })}
+                                                    />
+                                                    {errors.amount && (
+                                                        <ErrorText>
+                                                            {
+                                                                errors.amount
+                                                                    ?.message
+                                                            }
+                                                        </ErrorText>
+                                                    )}
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div className="col-md-4 col-sm-4">
+                                            /*                                        <div className="col-md-4 col-sm-4">
                                             <div className="input-box pb--20 rn-check-box">
                                                 <input
                                                     className="rn-check-box-input"
@@ -338,9 +394,10 @@ const CreateNewArea = ({ className, space }) => {
                                                     Unlock Purchased
                                                 </label>
                                             </div>
-                                        </div>
+                                        </div> */
+                                        }
 
-                                        <div className="col-md-12 col-xl-4">
+                                        {/* <div className="col-md-12 col-xl-4">
                                             <div className="input-box">
                                                 <Button
                                                     color="primary-alta"
@@ -354,19 +411,19 @@ const CreateNewArea = ({ className, space }) => {
                                                     Preview
                                                 </Button>
                                             </div>
-                                        </div>
+                                        </div> */}
 
-                                        <div className="col-md-12 col-xl-8 mt_lg--15 mt_md--15 mt_sm--15">
+                                        <div className="col-md-12 col-xl-12 mt_lg--15 mt_md--15 mt_sm--15">
                                             <div className="input-box">
                                                 <Button type="submit" fullwidth>
-                                                    Submit Item
+                                                    Mint NFT
                                                 </Button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="mt--100 mt_sm--30 mt_md--30 d-block d-lg-none">
+                            {/* <div className="mt--100 mt_sm--30 mt_md--30 d-block d-lg-none">
                                 <h5> Note: </h5>
                                 <span>
                                     {" "}
@@ -378,7 +435,7 @@ const CreateNewArea = ({ className, space }) => {
                                     You will receive :{" "}
                                     <strong>25.00 ETH $50,000</strong>
                                 </span>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </form>
