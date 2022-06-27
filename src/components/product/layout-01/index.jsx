@@ -29,6 +29,10 @@ const Product = ({
     const handleBidModal = () => {
         setShowBidModal((prev) => !prev);
     };
+
+    const getImageSrc = (image) => {
+        return image.src ? image.src : `https://ipfs.infura.io/ipfs/${image}`;
+    };
     return (
         <>
             <div
@@ -39,10 +43,10 @@ const Product = ({
                 )}
             >
                 <div className="card-thumbnail">
-                    {image?.src && (
+                    {(image || image?.src) && (
                         <Anchor path={`/product/${slug}`}>
                             <Image
-                                src={image.src}
+                                src={getImageSrc(image)}
                                 alt={image?.alt || "NFT_portfolio"}
                                 width={533}
                                 height={533}
@@ -78,8 +82,8 @@ const Product = ({
                 <Anchor path={`/product/${slug}`}>
                     <span className="product-name">{title}</span>
                 </Anchor>
-                <span className="latest-bid">Highest bid {latestBid}</span>
-                <ProductBid price={price} likeCount={likeCount} />
+                {/* <span className="latest-bid">Latest bid: {latestBid}</span> */}
+                {/* <ProductBid price={price} likeCount={likeCount} /> */}
             </div>
             <PlaceBidModal show={showBidModal} handleModal={handleBidModal} />
         </>
@@ -97,7 +101,7 @@ Product.propTypes = {
     }).isRequired,
     likeCount: PropTypes.number.isRequired,
     auction_date: PropTypes.string,
-    image: ImageType.isRequired,
+    image: PropTypes.any,
     authors: PropTypes.arrayOf(
         PropTypes.shape({
             name: PropTypes.string.isRequired,

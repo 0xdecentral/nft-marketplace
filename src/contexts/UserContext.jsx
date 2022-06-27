@@ -10,16 +10,23 @@ const RPC_URLS = {
     1: process.env.RPC_URL_1,
     3: process.env.RPC_URL_3,
     4: process.env.RPC_URL_4,
+    5: process.env.RPC_URL_5,
     42: process.env.RPC_URL_42,
 };
 const SUPPORTED_CONNECTORS = ["injected", "walletconnect"];
 
 export const injected = new InjectedConnector({
-    supportedChainIds: [1, 3, 4, 42],
+    supportedChainIds: [1, 3, 4, 5, 42],
 });
 
 export const walletconnect = new WalletConnectConnector({
-    rpc: { 1: RPC_URLS[1], 3: RPC_URLS[3], 4: RPC_URLS[4], 42: RPC_URLS[42] },
+    rpc: {
+        1: RPC_URLS[1],
+        3: RPC_URLS[3],
+        4: RPC_URLS[4],
+        5: RPC_URLS[5],
+        42: RPC_URLS[42],
+    },
     qrcode: true,
     pollingInterval: POLLING_INTERVAL,
 });
@@ -38,6 +45,7 @@ const networks = {
     1: "Mainnet",
     3: "Ropsten",
     4: "Rinkeby",
+    5: "Goerli",
     42: "Kovan",
 };
 

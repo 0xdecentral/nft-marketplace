@@ -74,7 +74,12 @@ const CreateNewArea = ({ className, space }) => {
             let metadataCID;
 
             try {
-                const file = JSON.stringify(data);
+                const metadata = { ...data };
+                metadata["image"] = imageCID;
+                delete metadata.amount;
+
+                const file = JSON.stringify(metadata);
+
                 const added = await client.add(file, {
                     progress: (prog) => console.log(`received: ${prog}`),
                 });

@@ -7,12 +7,26 @@ import Nav from "react-bootstrap/Nav";
 import Product from "@components/product/layout-01";
 import { ProductType } from "@utils/types";
 import { shuffleArray } from "@utils/methods";
+import { useEthereum } from "src/contexts/EthereumContext";
+import { useEffect, useState } from "react";
+import { fetchNFTs } from "src/lib/alchemy";
+import { useUser } from "src/contexts/UserContext";
 
 const AuthorProfileArea = ({ className, data }) => {
     const onSaleProducts = shuffleArray(data.products).slice(0, 10);
-    const ownedProducts = shuffleArray(data.products).slice(0, 10);
+    // const ownedProducts = shuffleArray(data.products).slice(0, 10);
     const createdProducts = shuffleArray(data.products).slice(0, 10);
     const likedProducts = shuffleArray(data.products).slice(0, 10);
+    const { erc1155Contract } = useEthereum();
+    const { account, chainId } = useUser();
+    const [ownedProducts, setOwnedProducts] = useState([]);
+
+    useEffect(() => {
+        if (!account || !chainId) return;
+        fetchNFTs(account, chainId).then((res) => {
+            setOwnedProducts(res);
+        });
+    }, [account, chainId]);
 
     return (
         <div className={clsx("rn-authore-profile-area", className)}>
@@ -86,19 +100,19 @@ const AuthorProfileArea = ({ className, data }) => {
                         >
                             {ownedProducts?.map((prod) => (
                                 <div
-                                    key={prod.id}
+                                    key={prod.name}
                                     className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
                                 >
                                     <Product
                                         overlay
                                         placeBid
-                                        title={prod.title}
-                                        slug={prod.slug}
+                                        title={prod.metadata.name}
+                                        slug={prod.metadata.name}
                                         latestBid={prod.latestBid}
                                         price={prod.price}
                                         likeCount={prod.likeCount}
                                         auction_date={prod.auction_date}
-                                        image={prod.images?.[0]}
+                                        image={prod.metadata.image}
                                         authors={prod.authors}
                                         bitCount={prod.bitCount}
                                     />
