@@ -41,12 +41,12 @@ const AuthorProfileArea = ({ className, data }) => {
                                         id="nav-tab"
                                         role="tablist"
                                     >
-                                        <Nav.Link
+                                        {/* <Nav.Link
                                             as="button"
                                             eventKey="nav-home"
                                         >
                                             On Sale
-                                        </Nav.Link>
+                                        </Nav.Link> */}
                                         <Nav.Link
                                             as="button"
                                             eventKey="nav-profile"
@@ -72,7 +72,7 @@ const AuthorProfileArea = ({ className, data }) => {
                     </div>
 
                     <TabContent className="tab-content rn-bid-content">
-                        <TabPane className="row d-flex g-5" eventKey="nav-home">
+                        {/* <TabPane className="row d-flex g-5" eventKey="nav-home">
                             {onSaleProducts?.map((prod) => (
                                 <div
                                     key={prod.id}
@@ -93,7 +93,7 @@ const AuthorProfileArea = ({ className, data }) => {
                                     />
                                 </div>
                             ))}
-                        </TabPane>
+                        </TabPane> */}
                         <TabPane
                             className="row g-5 d-flex"
                             eventKey="nav-profile"

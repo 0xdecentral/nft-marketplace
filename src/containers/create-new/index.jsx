@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { useForm } from "react-hook-form";
@@ -9,6 +9,8 @@ import ErrorText from "@ui/error-text";
 import { toast } from "react-toastify";
 import { create } from "ipfs-http-client";
 import { useEthereum } from "src/contexts/EthereumContext";
+import { createNFT, createUser, updateNFT } from "src/services/firestore";
+import { useUser } from "src/contexts/UserContext";
 
 const projectId = "2AV5zpklOWMZTeOM655tlEONPnj";
 const projectSecret = "373ca3c12a0fb3555dc913e7ff2ee356";
@@ -28,6 +30,7 @@ const CreateNewArea = ({ className, space }) => {
     const [hasImageError, setHasImageError] = useState(false);
     const [previewData, setPreviewData] = useState({});
     const { erc1155Contract } = useEthereum();
+    const { account } = useUser();
 
     const {
         register,
@@ -90,16 +93,31 @@ const CreateNewArea = ({ className, space }) => {
             }
 
             if (metadataCID) {
+                createNFT({ ...data, metadataCID, creator: account });
+
                 const tx = await erc1155Contract.mint(
                     metadataCID,
                     data.amount,
                     "0x"
                 );
 
-                await tx.wait();
+                const res = await tx.wait();
+
+                console.log("I am tx!!!!!!!!", res);
+
+                const event = res.events.find(
+                    (e) => e.event === "TokenERC1155Mint"
+                );
+
+                console.log("I am event!!!!", event);
+
+                updateNFT(metadataCID, {
+                    address: res.to,
+                    tokenId: event.args.tokenId.toString(),
+                });
             }
         } catch (error) {
-            console.log("Erorr minting NFT");
+            console.log("Erorr minting NFT", error);
         }
 
         // if (isPreviewBtn && imageCID) {
@@ -112,6 +130,12 @@ const CreateNewArea = ({ className, space }) => {
         //     setImageCID();
         // }
     };
+
+    // useEffect(() => {
+    //     if (account) {
+    //         createUser(account);
+    //     }
+    // }, [account]);
 
     return (
         <>
