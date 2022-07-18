@@ -16,7 +16,12 @@ module.exports = {
         return config;
     },
     images: {
-        domains: ["assets-cdn.trustwallet.com", "ipfs.infura.io"],
+        domains: [
+            "assets-cdn.trustwallet.com",
+            "ipfs.infura.io",
+            "lh3.googleusercontent.com",
+            "ipfs.io",
+        ],
     },
     env: {
         RPC_URL_1: process.env.RPC_URL_1,

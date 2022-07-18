@@ -29,16 +29,16 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 export const createUser = (address) => {
-    const userRef = doc(db, "users", address);
+    const userRef = doc(db, "users", address.toLowerCase());
 
     setDoc(userRef, {
-        created: serverTimestamp(),
+        created: serverTimestamp().toString(),
         address: address,
     });
 };
 
-export const createNFT = (data) => {
-    const nftRef = doc(db, "nfts", data.metadataCID);
+export const createNFT = (id, data) => {
+    const nftRef = doc(db, "nfts", id.toLowerCase());
 
     setDoc(nftRef, {
         created: serverTimestamp(),
@@ -47,9 +47,25 @@ export const createNFT = (data) => {
 };
 
 export const updateNFT = (cid, data) => {
-    const nftsRef = doc(db, "nfts", cid);
+    const nftsRef = doc(db, "nfts", cid.toLowerCase());
 
     updateDoc(nftsRef, data);
+};
+
+export const getNft = async (cid) => {
+    const nftRef = doc(db, "nfts", cid.toLowerCase());
+
+    const docData = await getDoc(nftRef);
+
+    return docData.data();
+};
+
+export const getUser = async (cid) => {
+    const userRef = doc(db, "users", cid.toLowerCase());
+
+    const docData = await getDoc(userRef);
+
+    return docData.data();
 };
 
 export const getUsers = () => {

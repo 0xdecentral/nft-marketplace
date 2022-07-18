@@ -27,21 +27,22 @@ const Provider = ({ children }) => {
         }
 
         const signer = await library.getSigner(account);
-        // const marketplaceContract = new ethers.Contract(
-        //     ContractAddress.MARKETPLACE,
-        //     MarketplaceABI,
-        //     signer
-        // );
+        const marketplaceContract = new ethers.Contract(
+            ContractAddress.MARKETPLACE,
+            MarketplaceABI,
+            signer
+        );
 
-        // setMarketplaceContract(marketplaceContract);
+        setMarketplaceContract(marketplaceContract);
 
-        // const tokenContract = new ethers.Contract(
-        //     ContractAddress.TOKEN,
-        //     TokenABI,
-        //     signer
-        // );
+        const tokenContract = new ethers.Contract(
+            ContractAddress.TOKEN,
+            TokenABI,
+            signer
+        );
 
-        // setTokenContract(tokenContract);
+        setTokenContract(tokenContract);
+
         const erc1155Contract = new ethers.Contract(
             ContractAddress.ERC1155,
             ERC1155ABI,

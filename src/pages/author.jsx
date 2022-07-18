@@ -6,23 +6,38 @@ import AuthorIntroArea from "@containers/author-intro";
 import AuthorProfileArea from "@containers/author-profile";
 
 // Demo data
-import authorData from "../data/author.json";
 import productData from "../data/products.json";
+import { useEffect, useState } from "react";
+import { getUser } from "src/services/firestore";
+import { useUser } from "src/contexts/UserContext";
 
 export async function getStaticProps() {
     return { props: { className: "template-color-1" } };
 }
 
-const Author = () => (
-    <Wrapper>
-        <SEO pageTitle="Author" />
-        <Header />
-        <main id="main-content">
-            <AuthorIntroArea data={authorData} />
-            <AuthorProfileArea data={{ products: productData }} />
-        </main>
-        <Footer />
-    </Wrapper>
-);
+const Author = () => {
+    const { account } = useUser();
+    const [authorInfo, setAuthorInfo] = useState();
+
+    useEffect(() => {
+        if (!account) return;
+
+        getUser(account).then((res) => {
+            setAuthorInfo(res);
+        });
+    }, [account]);
+
+    return (
+        <Wrapper>
+            <SEO pageTitle="Author" />
+            <Header />
+            <main id="main-content">
+                <AuthorIntroArea data={authorInfo} />
+                <AuthorProfileArea data={{ products: productData }} />
+            </main>
+            <Footer />
+        </Wrapper>
+    );
+};
 
 export default Author;

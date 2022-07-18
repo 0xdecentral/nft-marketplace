@@ -66,71 +66,69 @@ const CreateNewArea = ({ className, space }) => {
     }
 
     const onSubmit = async (data, e) => {
-        // const { target } = e;
-        // const submitBtn =
-        //     target.localName === "span" ? target.parentElement : target;
-        // const isPreviewBtn = submitBtn.dataset?.btn;
-
+        // // make temp nft
+        // const nftAddress = "0xdef0b12f772bad3402d2ac764488b88e16f67856";
+        // const tokenId = "8";
+        // const image =
+        //     "https://ipfs.io/ipfs/QmUKPyGpsYuxEuX6VmPpC8uaTUL7KLJWTEucZMjNbqxsNW";
+        // const metadataCID = "QmRM8WZkQz5BTK1m7UbxL6TJWotSjm4sCK2UJG33ozPncA";
+        // createNFT(`${nftAddress}-${tokenId}`, {
+        //     amount: 3,
+        //     description: "BGGH",
+        //     title: "BGF",
+        //     metadataCID,
+        //     creator: "0x8ebf16e9653EA8EF042eEc160970CC27226526b4",
+        //     owner: "0x8ebf16e9653EA8EF042eEc160970CC27226526b4",
+        //     image: image,
+        //     address: nftAddress,
+        //     tokenId: tokenId,
+        //     status: "listed",
+        // });
         setHasImageError(!imageCID);
-
         try {
             let metadataCID;
-
             try {
                 const metadata = { ...data };
                 metadata["image"] = imageCID;
                 delete metadata.amount;
-
                 const file = JSON.stringify(metadata);
-
                 const added = await client.add(file, {
                     progress: (prog) => console.log(`received: ${prog}`),
                 });
-
                 metadataCID = added.path;
             } catch (error) {
                 console.log("Error uploading file: ", error);
             }
-
             if (metadataCID) {
-                createNFT({ ...data, metadataCID, creator: account });
-
                 const tx = await erc1155Contract.mint(
                     metadataCID,
                     data.amount,
                     "0x"
                 );
-
                 const res = await tx.wait();
-
-                console.log("I am tx!!!!!!!!", res);
-
                 const event = res.events.find(
                     (e) => e.event === "TokenERC1155Mint"
                 );
-
-                console.log("I am event!!!!", event);
-
-                updateNFT(metadataCID, {
-                    address: res.to,
+                const nftAddress = res.to.toLowerCase();
+                createNFT(nftAddress + tokenId, {
+                    amount: data.amount,
+                    description: data.description,
+                    title: data.name,
+                    metadataCID,
+                    creator: account,
+                    owner: account,
+                    image: `https://ipfs.io/ipfs/${imageCID}`,
+                    address: nftAddress,
                     tokenId: event.args.tokenId.toString(),
+                    status: "none",
                 });
             }
         } catch (error) {
             console.log("Erorr minting NFT", error);
         }
-
-        // if (isPreviewBtn && imageCID) {
-        //     setPreviewData({ ...data, image: imageCID });
-        //     setShowProductModal(true);
-        // }
-        // if (!isPreviewBtn) {
-        //     notify();
-        //     reset();
-        //     setImageCID();
-        // }
     };
 
+    // create temp user
     // useEffect(() => {
     //     if (account) {
     //         createUser(account);

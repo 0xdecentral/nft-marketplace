@@ -10,6 +10,7 @@ import { shuffleArray } from "@utils/methods";
 
 // demo data
 import productData from "../../data/products.json";
+import { getNft } from "src/services/firestore";
 
 const ProductDetails = ({ product, recentViewProducts, relatedProducts }) => (
     <Wrapper>
@@ -20,42 +21,54 @@ const ProductDetails = ({ product, recentViewProducts, relatedProducts }) => (
                 pageTitle="Product Details"
                 currentPage="Product Details"
             />
-            <ProductDetailsArea product={product} />
-            <ProductArea
-                data={{
-                    section_title: { title: "Recent View" },
-                    products: recentViewProducts,
-                }}
-            />
-            <ProductArea
-                data={{
-                    section_title: { title: "Related Item" },
-                    products: relatedProducts,
-                }}
-            />
+            {!product ? (
+                <h4 className="text-center my-md-5">Not found</h4>
+            ) : (
+                <>
+                    <ProductDetailsArea product={product} />
+                    <ProductArea
+                        data={{
+                            section_title: { title: "Recent View" },
+                            products: recentViewProducts,
+                        }}
+                    />
+                    <ProductArea
+                        data={{
+                            section_title: { title: "Related Item" },
+                            products: relatedProducts,
+                        }}
+                    />
+                </>
+            )}
         </main>
         <Footer />
     </Wrapper>
 );
 
-export async function getStaticPaths() {
-    return {
-        paths: productData.map(({ slug }) => ({
-            params: {
-                slug,
-            },
-        })),
-        fallback: false,
-    };
-}
+// export async function getStaticPaths() {
+//     return {
+//         paths: productData.map(({ slug }) => ({
+//             params: {
+//                 slug,
+//             },
+//         })),
+//         fallback: false,
+//     };
+// }
 
-export async function getStaticProps({ params }) {
-    const product = productData.find(({ slug }) => slug === params.slug);
-    const { categories } = product;
-    const recentViewProducts = shuffleArray(productData).slice(0, 5);
-    const relatedProducts = productData
-        .filter((prod) => prod.categories?.some((r) => categories?.includes(r)))
-        .slice(0, 5);
+export async function getServerSideProps(ctx) {
+    const slug = ctx.params.slug;
+    let product = null;
+    let recentViewProducts = [];
+    let relatedProducts = [];
+
+    if (slug.startsWith("0x")) {
+        product = await getNft(slug);
+
+        if (product) product = { ...product, created: null };
+        else product = null;
+    }
+
     return {
         props: {
             className: "template-color-1",

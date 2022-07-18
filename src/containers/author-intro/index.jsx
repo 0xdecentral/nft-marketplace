@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import Image from "next/image";
@@ -6,10 +6,13 @@ import { ImageType } from "@utils/types";
 import ShareDropdown from "@components/share-dropdown";
 import ShareModal from "@components/modals/share-modal";
 import Anchor from "@ui/anchor";
+import { useUser } from "src/contexts/UserContext";
+import tempAuthor from "../../data/author.json";
 
 const AuthorIntroArea = ({ className, space, data }) => {
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const shareModalHandler = () => setIsShareModalOpen((prev) => !prev);
+
     return (
         <>
             <ShareModal
@@ -38,22 +41,29 @@ const AuthorIntroArea = ({ className, space, data }) => {
                         <div className="col-lg-12">
                             <div className="author-wrapper">
                                 <div className="author-inner">
-                                    {data?.image?.src && (
-                                        <div className="user-thumbnail">
-                                            <Image
-                                                src={data.image.src}
-                                                alt={
-                                                    data.image?.alt || data.name
-                                                }
-                                                width={140}
-                                                height={140}
-                                                layout="fixed"
-                                            />
-                                        </div>
-                                    )}
-
+                                    <div className="user-thumbnail">
+                                        <Image
+                                            src={
+                                                data?.avatar
+                                                    ? data.avatar
+                                                    : tempAuthor.image.src
+                                            }
+                                            alt={
+                                                data?.name
+                                                    ? data.name
+                                                    : data?.address
+                                            }
+                                            width={140}
+                                            height={140}
+                                            layout="fixed"
+                                        />
+                                    </div>
                                     <div className="rn-author-info-content">
-                                        <h4 className="title">{data.name}</h4>
+                                        <h4 className="title">
+                                            {data?.name
+                                                ? data.name
+                                                : data?.address}
+                                        </h4>
                                         <a
                                             href="https://twitter.com"
                                             target="_blank"
@@ -62,13 +72,13 @@ const AuthorIntroArea = ({ className, space, data }) => {
                                         >
                                             <i className="feather-twitter" />
                                             <span className="user-name">
-                                                {data.twitter}
+                                                {tempAuthor.twitter}
                                             </span>
                                         </a>
                                         <div className="follow-area">
                                             <div className="follow followers">
                                                 <span>
-                                                    {data.followers}{" "}
+                                                    {tempAuthor.followers}{" "}
                                                     <a
                                                         href="https://twitter.com"
                                                         target="_blank"
@@ -81,7 +91,7 @@ const AuthorIntroArea = ({ className, space, data }) => {
                                             </div>
                                             <div className="follow following">
                                                 <span>
-                                                    {data.following}{" "}
+                                                    {tempAuthor.following}{" "}
                                                     <a
                                                         href="https://twitter.com"
                                                         target="_blank"
@@ -130,13 +140,13 @@ const AuthorIntroArea = ({ className, space, data }) => {
 AuthorIntroArea.propTypes = {
     className: PropTypes.string,
     space: PropTypes.oneOf([1]),
-    data: PropTypes.shape({
-        name: PropTypes.string,
-        twitter: PropTypes.string,
-        followers: PropTypes.string,
-        following: PropTypes.string,
-        image: ImageType,
-    }),
+    // data: PropTypes.shape({
+    //     name: PropTypes.string,
+    //     twitter: PropTypes.string,
+    //     followers: PropTypes.string,
+    //     following: PropTypes.string,
+    //     image: ImageType,
+    // }),
 };
 AuthorIntroArea.defaultProps = {
     space: 1,

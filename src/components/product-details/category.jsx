@@ -8,11 +8,11 @@ const ProductCategory = ({ className, owner }) => (
         <span>
             Catagory <span className="color-body">10% royalties</span>
         </span>
-        <TopSeller
+        {/* <TopSeller
             name={owner.name}
             slug={owner.slug}
             image={{ src: owner.image.src, width: 44, height: 44 }}
-        />
+        /> */}
     </div>
 );
 

@@ -107,7 +107,6 @@ const AuthorProfileArea = ({ className, data }) => {
                                         overlay
                                         placeBid
                                         title={prod.metadata.name}
-                                        slug={prod.metadata.name}
                                         latestBid={prod.latestBid}
                                         price={prod.price}
                                         likeCount={prod.likeCount}
@@ -115,6 +114,13 @@ const AuthorProfileArea = ({ className, data }) => {
                                         image={prod.metadata.image}
                                         authors={prod.authors}
                                         bitCount={prod.bitCount}
+                                        // new
+                                        nftAddress={prod.contract.address}
+                                        tokenId={prod.id.tokenId}
+                                        tokenBalance={prod.balance}
+                                        slug={`${
+                                            prod.contract.address
+                                        }-${parseInt(prod.id.tokenId, 16)}`}
                                     />
                                 </div>
                             ))}

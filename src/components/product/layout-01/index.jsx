@@ -10,6 +10,7 @@ import ProductBid from "@components/product-bid";
 import Button from "@ui/button";
 import { ImageType } from "@utils/types";
 import PlaceBidModal from "@components/modals/placebid-modal";
+import { ContractAddress } from "@assets/constants/addresses";
 
 const Product = ({
     overlay,
@@ -24,6 +25,9 @@ const Product = ({
     authors,
     placeBid,
     disableShareDropdown,
+    nftAddress,
+    tokenId,
+    tokenBalance,
 }) => {
     const [showBidModal, setShowBidModal] = useState(false);
     const handleBidModal = () => {
@@ -33,6 +37,7 @@ const Product = ({
     const getImageSrc = (image) => {
         return image.src ? image.src : `https://ipfs.infura.io/ipfs/${image}`;
     };
+
     return (
         <>
             <div
@@ -56,7 +61,7 @@ const Product = ({
                     {auction_date && <CountdownTimer date={auction_date} />}
                     {placeBid && (
                         <Button onClick={handleBidModal} size="small">
-                            Place Bid
+                            List NFT
                         </Button>
                     )}
                 </div>
@@ -85,7 +90,14 @@ const Product = ({
                 {/* <span className="latest-bid">Latest bid: {latestBid}</span> */}
                 {/* <ProductBid price={price} likeCount={likeCount} /> */}
             </div>
-            <PlaceBidModal show={showBidModal} handleModal={handleBidModal} />
+            <PlaceBidModal
+                show={showBidModal}
+                handleClose={() => setShowBidModal(false)}
+                handleModal={handleBidModal}
+                nftAddress={nftAddress}
+                tokenId={tokenId}
+                tokenBalance={tokenBalance}
+            />
         </>
     );
 };
