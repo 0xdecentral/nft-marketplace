@@ -5,9 +5,11 @@ import { useEthereum } from "src/contexts/EthereumContext";
 import { useState } from "react";
 import TokenAmount from "src/lib/TokenAmount";
 import { ContractAddress } from "@assets/constants/addresses";
+import { createSubOrder } from "src/services/firestore";
+import { useUser } from "src/contexts/UserContext";
 
 const PlaceBidModal = ({
-    show,
+    status,
     nftAddress,
     tokenId,
     tokenBalance,
@@ -17,22 +19,54 @@ const PlaceBidModal = ({
 
     const { erc1155Contract, tokenContract, marketplaceContract } =
         useEthereum();
+    const { account } = useUser();
 
     const handlePlaceBid = async () => {
         //todo
         const tokenAddress = ContractAddress.TOKEN;
         const decimals = 18;
-        const amount = new TokenAmount(price, decimals, false);
+        const amount = new TokenAmount(price, decimals, false)
+            .toWei()
+            .toString();
+
+        let type = "";
 
         try {
-            const tx = await marketplaceContract.listNFT(
-                nftAddress,
-                tokenId,
-                tokenAddress,
-                amount.toWei().toString()
-            );
+            let tx;
+
+            if (status === 1) {
+                tx = await marketplaceContract.buyNFT(
+                    nftAddress,
+                    tokenId,
+                    tokenAddress,
+                    amount
+                );
+                type = "accepted";
+            } else if (status === 2) {
+                tx = await marketplaceContract.offerNFT(
+                    nftAddress,
+                    tokenId,
+                    tokenAddress,
+                    amount
+                );
+                type = "offer";
+            } else {
+                tx = await marketplaceContract.bidPlace(
+                    nftAddress,
+                    tokenId,
+                    amount
+                );
+
+                type = "bid";
+            }
 
             const res = await tx.wait();
+
+            await createSubOrder(`${nftAddress}-${tokenId}`, {
+                price: amount,
+                account,
+                type: type,
+            });
 
             handleClose();
         } catch (error) {
@@ -45,44 +79,50 @@ const PlaceBidModal = ({
         setPrice(event.target.value);
     };
 
+    const headerLabel =
+        status === 1
+            ? "Buy NFT"
+            : status === 2
+            ? "Offer new price"
+            : "Place a bid";
+
     return (
         <Modal
             className="rn-popup-modal placebid-modal-wrapper"
-            show={show}
+            show={status !== 0}
             onHide={handleClose}
             centered
         >
-            {show && (
-                <button
-                    type="button"
-                    className="btn-close"
-                    aria-label="Close"
-                    onClick={handleClose}
-                >
-                    <i className="feather-x" />
-                </button>
-            )}
-            <Modal.Header>
-                <h3 className="modal-title">Place a bid</h3>
-            </Modal.Header>
-            <Modal.Body>
-                <p>You are about to purchase This Product Form</p>
-                <div className="placebid-form-box">
-                    <h5 className="title">Your bid</h5>
-                    <div className="bid-content">
-                        <div className="bid-content-top">
-                            <div className="bid-content-left">
-                                <input
-                                    id="value"
-                                    type="text"
-                                    name="value"
-                                    onChange={handleChange}
-                                />
-                                <span>wETH</span>
-                            </div>
-                        </div>
+            {status ? (
+                <>
+                    <button
+                        type="button"
+                        className="btn-close"
+                        aria-label="Close"
+                        onClick={handleClose}
+                    >
+                        <i className="feather-x" />
+                    </button>
+                    <Modal.Header>
+                        <h3 className="modal-title">{headerLabel}</h3>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <div className="placebid-form-box">
+                            <h6 className="title">Price</h6>
+                            <div className="bid-content">
+                                <div className="bid-content-top">
+                                    <div className="bid-content-left">
+                                        <input
+                                            id="value"
+                                            type="text"
+                                            name="value"
+                                            onChange={handleChange}
+                                        />
+                                        <span>wETH</span>
+                                    </div>
+                                </div>
 
-                        <div className="bid-content-mid">
+                                {/* <div className="bid-content-mid">
                             <div className="bid-content-left">
                                 <span>Your Balance</span>
                                 <span>Service fee</span>
@@ -93,27 +133,24 @@ const PlaceBidModal = ({
                                 <span>10 wETH</span>
                                 <span>9588 wETH</span>
                             </div>
+                        </div> */}
+                            </div>
+                            <div className="bit-continue-button">
+                                <Button
+                                    size="medium"
+                                    fullwidth
+                                    className="mt-5"
+                                    onClick={handlePlaceBid}
+                                >
+                                    Place a bid
+                                </Button>
+                            </div>
                         </div>
-                    </div>
-                    <div className="bit-continue-button">
-                        <Button
-                            size="medium"
-                            fullwidth
-                            onClick={handlePlaceBid}
-                        >
-                            Place a bid
-                        </Button>
-                        <Button
-                            color="primary-alta"
-                            size="medium"
-                            className="mt--10"
-                            onClick={handleClose}
-                        >
-                            Cancel
-                        </Button>
-                    </div>
-                </div>
-            </Modal.Body>
+                    </Modal.Body>
+                </>
+            ) : (
+                <></>
+            )}
         </Modal>
     );
 };

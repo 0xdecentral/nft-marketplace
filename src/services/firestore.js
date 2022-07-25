@@ -1,3 +1,4 @@
+import { currentUnixTimestamp } from "@utils/formatter";
 import { initializeApp } from "firebase/app";
 import {
     getFirestore,
@@ -46,10 +47,10 @@ export const createNFT = (id, data) => {
     });
 };
 
-export const updateNFT = (cid, data) => {
-    const nftsRef = doc(db, "nfts", cid.toLowerCase());
+export const updateNFT = async (cid, data) => {
+    const nftRef = doc(db, "nfts", cid.toLowerCase());
 
-    updateDoc(nftsRef, data);
+    return updateDoc(nftRef, data);
 };
 
 export const getNft = async (cid) => {
@@ -68,9 +69,95 @@ export const getUser = async (cid) => {
     return docData.data();
 };
 
-export const getUsers = () => {
-    const usersRef = collection(db, "users");
-    return getDocs(usersRef);
+export const getUsers = async () => {
+    const usersRef = query(collection(db, "users"), orderBy("created", "asc"));
+
+    const docs = await getDocs(usersRef);
+
+    return docs;
+};
+
+export const getOrder = async (id) => {
+    const orderRef = doc(db, "orders", id.toLowerCase());
+
+    const docData = await getDoc(orderRef);
+
+    return docData.data();
+};
+
+export const createOrUpdateOrder = async (id, data) => {
+    await updateNFT(id, {
+        status: data.type,
+    });
+
+    const orderRef = doc(db, "orders", id.toLowerCase());
+
+    const docData = await getDoc(orderRef);
+
+    const existingOrder = docData.data();
+
+    const newOrder = {
+        // 'fixed' | 'auction'
+        type: data.type,
+        startingPrice: data.price,
+        payToken: data.tokenAddress,
+        startTime: currentUnixTimestamp(),
+        endTime: data.endTime,
+        acceptedAccount: null,
+        acceptedAmount: 0,
+        subOrders: [],
+    };
+
+    if (!existingOrder) {
+        setDoc(orderRef, {
+            created: serverTimestamp(),
+            // 'fixed' | 'auction' | 'completed'
+            status: data.type,
+            address: data.address,
+            tokenId: data.tokenId,
+            orders: [newOrder],
+        });
+    } else {
+        existingOrder.orders.push(newOrder);
+        existingOrder.status = data.type;
+
+        setDoc(orderRef, existingOrder);
+    }
+};
+
+export const createSubOrder = async (id, data) => {
+    const orderRef = doc(db, "orders", id.toLowerCase());
+
+    const docData = await getDoc(orderRef);
+
+    const existingOrder = docData.data();
+
+    if (!existingOrder) {
+        return;
+    } else {
+        const order = existingOrder.orders[existingOrder.orders.length - 1];
+
+        if (data.type === "accepted") {
+            order.acceptedAccount = data.account;
+            order.acceptedAmount = data.price;
+
+            existingOrder.status = null;
+
+            await updateNFT(id, {
+                owner: data.account,
+                status: null,
+            });
+        }
+
+        order.subOrders.push({
+            price: data.price,
+            account: data.account,
+            created: currentUnixTimestamp(),
+            type: data.type,
+        });
+
+        setDoc(orderRef, existingOrder);
+    }
 };
 
 // export const updateNFT = (cid, data) => {

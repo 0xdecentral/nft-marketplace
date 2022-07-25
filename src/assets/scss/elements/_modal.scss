@@ -233,6 +233,32 @@ body.modal-open {
                             transform: translateY(-50%);
                         }
                     }
+
+                    .title {
+                        margin-bottom: 8px;
+                    }
+                }
+            }
+
+            .bit-continue-button {
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .bid-type {
+                background: #eee;
+                text-align: center;
+                padding: 30px 0;
+                border: 2px solid var(--color-border-white);
+                border-radius: 5px;
+                cursor: pointer;
+
+                &.active {
+                    background: #aaa;
+                }
+
+                &:hover {
+                    background: #ddd;
                 }
             }
         }

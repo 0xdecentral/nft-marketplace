@@ -9,20 +9,32 @@ import ProductCollection from "@components/product-details/collection";
 import BidTab from "@components/product-details/bid-tab";
 import PlaceBet from "@components/product-details/place-bet";
 import { ImageType } from "@utils/types";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PlaceBidModal from "@components/modals/placebid-modal";
 import { useUser } from "src/contexts/UserContext";
+import { isAddressSame } from "@utils/formatter";
+import ListModal from "@components/modals/list-modal";
+import { getOrder } from "src/services/firestore";
 
 // Demo Image
 
 const ProductDetailsArea = ({ space, className, product }) => {
     const { account } = useUser();
 
-    const [showBidModal, setShowBidModal] = useState(false);
+    const [showBidModal, setShowBidModal] = useState(0);
+    const [showListModal, setShowListModal] = useState(false);
+    const [orderInfo, setOrderInfo] = useState();
 
-    const isOwner = product.owner === account;
-    const isListed = product.status === "listed";
-    const isAuctionStarted = product.status === "auctioned";
+    const isOwner = isAddressSame(product.owner, account);
+    const isListed = product.status === "fixed";
+    const isAuctionStarted = product.status === "auction";
+
+    useEffect(() => {
+        if (!product) return;
+        getOrder(`${product.address}-${product.tokenId}`).then((res) =>
+            setOrderInfo(res)
+        );
+    }, [product]);
 
     return (
         <>
@@ -71,7 +83,7 @@ const ProductDetailsArea = ({ space, className, product }) => {
                                 {isOwner && (
                                     <Button
                                         color="primary-alta"
-                                        onClick={() => setShowBidModal(true)}
+                                        onClick={() => setShowListModal(true)}
                                     >
                                         List NFT
                                     </Button>
@@ -84,7 +96,7 @@ const ProductDetailsArea = ({ space, className, product }) => {
                                                     color="primary-alta"
                                                     className="mr--20"
                                                     onClick={() =>
-                                                        setShowBidModal(true)
+                                                        setShowBidModal(1)
                                                     }
                                                 >
                                                     Buy
@@ -92,7 +104,7 @@ const ProductDetailsArea = ({ space, className, product }) => {
                                                 <Button
                                                     color="primary-alta"
                                                     onClick={() =>
-                                                        setShowBidModal(true)
+                                                        setShowBidModal(2)
                                                     }
                                                 >
                                                     Offer
@@ -102,7 +114,7 @@ const ProductDetailsArea = ({ space, className, product }) => {
                                             <Button
                                                 color="primary-alta"
                                                 onClick={() =>
-                                                    setShowBidModal(true)
+                                                    setShowBidModal(3)
                                                 }
                                             >
                                                 Bid
@@ -134,8 +146,16 @@ const ProductDetailsArea = ({ space, className, product }) => {
             </div>
 
             <PlaceBidModal
-                show={showBidModal}
-                handleClose={() => setShowBidModal(false)}
+                status={showBidModal}
+                handleClose={() => setShowBidModal(0)}
+                nftAddress={product.address}
+                tokenId={product.tokenId}
+                tokenBalance={product.amount}
+            />
+
+            <ListModal
+                show={showListModal}
+                handleClose={() => setShowListModal(false)}
                 nftAddress={product.address}
                 tokenId={product.tokenId}
                 tokenBalance={product.amount}

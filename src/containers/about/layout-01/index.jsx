@@ -15,7 +15,7 @@ const AboutArea = ({ className, space, data }) => (
                     <div className="about-wrapper text-center">
                         {data?.title && <h2>{data.title}</h2>}
                         {data?.description && (
-                            <p className="discription">{data.description}</p>
+                            <p className="description">{data.description}</p>
                         )}
                     </div>
                 </div>

@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useWeb3React } from "@web3-react/core";
 import { InjectedConnector } from "@web3-react/injected-connector";
 import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
+import { getUsers } from "src/services/firestore";
 
 const Context = React.createContext({});
 const POLLING_INTERVAL = 12000;

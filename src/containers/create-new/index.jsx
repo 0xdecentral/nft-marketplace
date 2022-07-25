@@ -82,7 +82,7 @@ const CreateNewArea = ({ className, space }) => {
         //     image: image,
         //     address: nftAddress,
         //     tokenId: tokenId,
-        //     status: "listed",
+        //     status: null,
         // });
         setHasImageError(!imageCID);
         try {
@@ -110,7 +110,9 @@ const CreateNewArea = ({ className, space }) => {
                     (e) => e.event === "TokenERC1155Mint"
                 );
                 const nftAddress = res.to.toLowerCase();
-                createNFT(nftAddress + tokenId, {
+                const tokenId = event.args.tokenId.toString();
+
+                createNFT(`${nftAddress}-${tokenId}`, {
                     amount: data.amount,
                     description: data.description,
                     title: data.name,
@@ -119,8 +121,8 @@ const CreateNewArea = ({ className, space }) => {
                     owner: account,
                     image: `https://ipfs.io/ipfs/${imageCID}`,
                     address: nftAddress,
-                    tokenId: event.args.tokenId.toString(),
-                    status: "none",
+                    tokenId,
+                    status: null,
                 });
             }
         } catch (error) {
@@ -238,27 +240,27 @@ const CreateNewArea = ({ className, space }) => {
                                         <div className="col-md-12">
                                             <div className="input-box pb--20">
                                                 <label
-                                                    htmlFor="Discription"
+                                                    htmlFor="Description"
                                                     className="form-label"
                                                 >
-                                                    Discription
+                                                    Description
                                                 </label>
                                                 <textarea
-                                                    id="discription"
+                                                    id="description"
                                                     rows="3"
                                                     placeholder="e. g. “After purchasing the product you can get item...”"
                                                     {...register(
-                                                        "discription",
+                                                        "description",
                                                         {
                                                             required:
-                                                                "Discription is required",
+                                                                "Description is required",
                                                         }
                                                     )}
                                                 />
-                                                {errors.discription && (
+                                                {errors.description && (
                                                     <ErrorText>
                                                         {
-                                                            errors.discription
+                                                            errors.description
                                                                 ?.message
                                                         }
                                                     </ErrorText>
