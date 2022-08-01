@@ -61,6 +61,14 @@ export const getNft = async (cid) => {
     return docData.data();
 };
 
+export const getNfts = async () => {
+    const nftsref = query(collection(db, "nfts"), orderBy("created", "desc"));
+
+    const docs = (await getDocs(nftsref)).docs;
+
+    return docs;
+};
+
 export const getUser = async (cid) => {
     const userRef = doc(db, "users", cid.toLowerCase());
 

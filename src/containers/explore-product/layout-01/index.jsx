@@ -23,11 +23,13 @@ function reducer(state, action) {
 
 const ExploreProductArea = ({ className, space, data, hasFilter }) => {
     const itemsToFilter = [...data.products];
+
     const [state, dispatch] = useReducer(reducer, {
         filterToggle: false,
         products: data.products || [],
         inputs: { price: [0, 100] },
     });
+
     const filterRef = useRef(null);
     const filterHandler = () => {
         dispatch({ type: "FILTER_TOGGLE" });
@@ -54,24 +56,24 @@ const ExploreProductArea = ({ className, space, data, hasFilter }) => {
     };
 
     const filterMethods = (item, filterKey, value) => {
-        if (value === "all") return false;
-        let itemKey = filterKey;
-        if (filterKey === "category") {
-            itemKey = "categories";
-        }
-        if (filterKey === "price") {
-            return (
-                item[itemKey].amount <= value[0] / 100 ||
-                item[itemKey].amount >= value[1] / 100
-            );
-        }
-        if (Array.isArray(item[itemKey])) {
-            return !item[itemKey].includes(value);
-        }
-        if (filterKey === "collection") {
-            return item[itemKey].name !== value;
-        }
-        return item[itemKey] !== value;
+        // if (value === "all") return false;
+        // let itemKey = filterKey;
+        // if (filterKey === "category") {
+        //     itemKey = "categories";
+        // }
+        // if (filterKey === "price") {
+        //     return (
+        //         item[itemKey].amount <= value[0] / 100 ||
+        //         item[itemKey].amount >= value[1] / 100
+        //     );
+        // }
+        // if (Array.isArray(item[itemKey])) {
+        //     return !item[itemKey].includes(value);
+        // }
+        // if (filterKey === "collection") {
+        //     return item[itemKey].name !== value;
+        // }
+        // return item[itemKey] !== value;
     };
 
     const itemFilterHandler = useCallback(() => {
@@ -91,6 +93,8 @@ const ExploreProductArea = ({ className, space, data, hasFilter }) => {
     useEffect(() => {
         itemFilterHandler();
     }, [itemFilterHandler]);
+
+    console.log("I am data!!!!!", data);
     return (
         <div
             className={clsx(
@@ -127,23 +131,27 @@ const ExploreProductArea = ({ className, space, data, hasFilter }) => {
                     inputs={state.inputs}
                 />
                 <div className="row g-5">
-                    {state.products.length > 0 ? (
+                    {data.products.length > 0 ? (
                         <>
-                            {state.products.slice(0, 10).map((prod) => (
+                            {data.products.slice(0, 10).map((prod) => (
                                 <div
                                     key={prod.id}
                                     className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
                                 >
                                     <Product
+                                        image={{ src: prod.image }}
+                                        title={prod.title}
+                                        slug={`${prod.address}-${prod.tokenId}`}
+                                        nftAddress={prod.address}
+                                        tokenId={prod.tokenId}
+                                        tokenBalance={prod.amount}
+                                        //old
                                         overlay
                                         placeBid={!!data.placeBid}
-                                        title={prod.title}
-                                        slug={prod.slug}
                                         latestBid={prod.latestBid}
                                         price={prod.price}
                                         likeCount={prod.likeCount}
                                         auction_date={prod.auction_date}
-                                        image={prod.images?.[0]}
                                         authors={prod.authors}
                                         bitCount={prod.bitCount}
                                     />
@@ -159,15 +167,15 @@ const ExploreProductArea = ({ className, space, data, hasFilter }) => {
     );
 };
 
-ExploreProductArea.propTypes = {
-    className: PropTypes.string,
-    space: PropTypes.oneOf([1, 2]),
-    data: PropTypes.shape({
-        section_title: SectionTitleType,
-        products: PropTypes.arrayOf(ProductType),
-        placeBid: PropTypes.bool,
-    }),
-};
+// ExploreProductArea.propTypes = {
+//     className: PropTypes.string,
+//     space: PropTypes.oneOf([1, 2]),
+//     data: PropTypes.shape({
+//         section_title: SectionTitleType,
+//         products: PropTypes.arrayOf(ProductType),
+//         placeBid: PropTypes.bool,
+//     }),
+// };
 
 ExploreProductArea.defaultProps = {
     space: 1,
