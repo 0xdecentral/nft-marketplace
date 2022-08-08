@@ -12,9 +12,11 @@ import { ImageType } from "@utils/types";
 import { useEffect, useMemo, useState } from "react";
 import PlaceBidModal from "@components/modals/placebid-modal";
 import { useUser } from "src/contexts/UserContext";
-import { isAddressSame } from "@utils/formatter";
+import { formatDateString, isAddressSame } from "@utils/formatter";
 import ListModal from "@components/modals/list-modal";
 import { getOrder } from "src/services/firestore";
+import { getStartingPrice } from "@utils/orders";
+import { formatAddress, getESLink } from "@utils/address";
 
 // Demo Image
 
@@ -23,19 +25,29 @@ const ProductDetailsArea = ({ space, className, product }) => {
 
     const [showBidModal, setShowBidModal] = useState(0);
     const [showListModal, setShowListModal] = useState(false);
-    const [orderInfo, setOrderInfo] = useState();
+    const [info, setInfo] = useState({});
 
     const isOwner = isAddressSame(product.owner, account);
     const isListed = product.status === "fixed";
     const isAuctionStarted = product.status === "auction";
+    const isListedOrAuctionStarted = isListed || isAuctionStarted;
 
     useEffect(() => {
         if (!product) return;
-        getOrder(`${product.address}-${product.tokenId}`).then((res) =>
-            setOrderInfo(res)
-        );
+        getOrder(`${product.address}-${product.tokenId}`).then((res) => {
+            if (!res) return;
+
+            const orders = res.orders;
+
+            setInfo({
+                startingPrice: getStartingPrice(res.orders),
+                lastOrder: orders[orders.length - 1],
+                orderInfo: res,
+            });
+        });
     }, [product]);
 
+    console.log("I am info!!!!!", info);
     return (
         <>
             <div
@@ -59,28 +71,52 @@ const ProductDetailsArea = ({ space, className, product }) => {
                                     likeCount={product.likeCount}
                                 />
                                 <span className="bid">
-                                    {/* Height bid{" "}
-                                <span className="price">
-                                    {product.price.amount}
-                                    {product.price.currency}
-                                </span> */}
+                                    Current Price:
+                                    <span className="price">
+                                        {info.startingPrice}
+                                        {` `}Weth
+                                    </span>
                                 </span>
+                                {/* <h6 className="title-name">
+                                    Contract Address:
+                                    <span className="mx-2">
+                                        {product.address}
+                                    </span>
+                                </h6> */}
                                 <h6 className="title-name">
-                                    {product.address}
+                                    Owner:
+                                    <a
+                                        href={`${getESLink(product.owner)}`}
+                                        target="_blank"
+                                        className="mx-2"
+                                    >
+                                        {formatAddress(product.owner)}
+                                    </a>
                                 </h6>
-                                <div className="catagory-collection">
-                                    {/* <ProductCategory
+
+                                {isListedOrAuctionStarted && (
+                                    <div>
+                                        <h6>
+                                            Sale ends{" "}
+                                            {formatDateString(
+                                                info?.lastOrder?.endTime
+                                            )}
+                                        </h6>
+                                    </div>
+                                )}
+                                {/* <div className="catagory-collection">
+                                    <ProductCategory
                                     owner={
                                         product.owner
                                             ? product.owner
                                             : product.creator
                                     }
-                                /> */}
-                                    {/* <ProductCollection
+                                />
+                                    <ProductCollection
                                     collection={product.collection}
-                                /> */}
-                                </div>
-                                {isOwner && (
+                                />
+                                </div> */}
+                                {isOwner && !isListedOrAuctionStarted && (
                                     <Button
                                         color="primary-alta"
                                         onClick={() => setShowListModal(true)}
@@ -124,7 +160,7 @@ const ProductDetailsArea = ({ space, className, product }) => {
                                 )}
                                 <div className="rn-bid-details">
                                     <BidTab
-                                        bids={product?.bids}
+                                        orders={info?.orderInfo?.orders}
                                         owner={
                                             product.owner
                                                 ? product.owner

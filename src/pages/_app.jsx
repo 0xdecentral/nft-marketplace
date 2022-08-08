@@ -12,6 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { UserProvider } from "src/contexts/UserContext";
 import { EthereumProvider } from "src/contexts/EthereumContext";
 import { SSRProvider } from "react-bootstrap";
+import { FirebaseProvider } from "src/contexts/FirebaseContext";
 
 const MyApp = ({ Component, pageProps }) => {
     const router = useRouter();
@@ -38,7 +39,9 @@ const MyApp = ({ Component, pageProps }) => {
                 <Web3ReactProvider getLibrary={getLibrary}>
                     <UserProvider>
                         <EthereumProvider>
-                            <Component {...pageProps} />
+                            <FirebaseProvider>
+                                <Component {...pageProps} />
+                            </FirebaseProvider>
                         </EthereumProvider>
                     </UserProvider>
                 </Web3ReactProvider>

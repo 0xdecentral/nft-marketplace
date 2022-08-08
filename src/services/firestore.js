@@ -80,7 +80,7 @@ export const getUser = async (cid) => {
 export const getUsers = async () => {
     const usersRef = query(collection(db, "users"), orderBy("created", "asc"));
 
-    const docs = await getDocs(usersRef);
+    const docs = (await getDocs(usersRef)).docs;
 
     return docs;
 };
@@ -114,6 +114,7 @@ export const createOrUpdateOrder = async (id, data) => {
         acceptedAccount: null,
         acceptedAmount: 0,
         subOrders: [],
+        creator: data.creator,
     };
 
     if (!existingOrder) {

@@ -8,6 +8,7 @@ import { ContractAddress } from "@assets/constants/addresses";
 import clsx from "clsx";
 import { convertToUnixTimestamp, currentUnixTimestamp } from "@utils/formatter";
 import { createOrder, createOrUpdateOrder } from "src/services/firestore";
+import { useUser } from "src/contexts/UserContext";
 
 const ListModal = ({
     show,
@@ -19,6 +20,7 @@ const ListModal = ({
     const [price, setPrice] = useState(0);
     const [duration, setDuration] = useState(0);
     const [isFixed, setIsFixed] = useState(true);
+    const { account } = useUser();
 
     const { erc1155Contract, tokenContract, marketplaceContract } =
         useEthereum();
@@ -33,6 +35,13 @@ const ListModal = ({
 
         try {
             let tx;
+
+            tx = await erc1155Contract.setApprovalForAll(
+                ContractAddress.MARKETPLACE,
+                true
+            );
+
+            await tx.wait();
 
             if (isFixed) {
                 tx = await marketplaceContract.listNFT(
@@ -62,6 +71,7 @@ const ListModal = ({
                 tokenAddress,
                 tokenId: tokenId,
                 endTime: convertToUnixTimestamp(duration),
+                creator: account,
             });
 
             handleClose();

@@ -1,35 +1,58 @@
-import PropTypes from "prop-types";
 import TopSeller from "@components/top-seller/layout-02";
-import { IDType, ImageType } from "@utils/types";
+import { useEffect, useState } from "react";
 
-const HistoryTabContent = ({ history }) => (
-    <div>
-        {history?.map((item) => (
-            <TopSeller
-                key={item.id}
-                name={item.user.name}
-                eth={item.amount}
-                path={item.user.slug}
-                time={item.bidAt}
-                image={item.user.image}
-            />
-        ))}
-    </div>
-);
+const HistoryTabContent = ({ orders }) => {
+    const [lastOrder, setLastOrder] = useState();
 
-HistoryTabContent.propTypes = {
-    history: PropTypes.arrayOf(
-        PropTypes.shape({
-            id: IDType.isRequired,
-            user: PropTypes.shape({
-                name: PropTypes.string.isRequired,
-                slug: PropTypes.string.isRequired,
-                image: ImageType.isRequired,
-            }),
-            amount: PropTypes.string.isRequired,
-            bidAt: PropTypes.string.isRequired,
-        })
-    ),
+    useEffect(() => {
+        if (!orders) return;
+        setLastOrder(orders[orders.length - 1]);
+    }, [orders]);
+
+    return (
+        <div>
+            {orders
+                ?.slice()
+                .reverse()
+                .map((order) => {
+                    return (
+                        <>
+                            {order.subOrders
+                                .slice()
+                                .reverse()
+                                .map((subOrder) => (
+                                    <TopSeller
+                                        key={subOrder.created}
+                                        name={subOrder.account}
+                                        eth={subOrder.price}
+                                        path={"/"}
+                                        time={subOrder.created}
+                                        type={subOrder.type}
+                                        image={{
+                                            src: "/images/avatar/default.png",
+                                            width: 44,
+                                            height: 44,
+                                        }}
+                                    />
+                                ))}
+                            <TopSeller
+                                key={order.startTime}
+                                name={order.creator}
+                                eth={order.startingPrice}
+                                path={"/"}
+                                time={order.startTime}
+                                type={order.type}
+                                image={{
+                                    src: "/images/avatar/default.png",
+                                    width: 44,
+                                    height: 44,
+                                }}
+                            />
+                        </>
+                    );
+                })}
+        </div>
+    );
 };
 
 export default HistoryTabContent;

@@ -34,6 +34,13 @@ const PlaceBidModal = ({
         try {
             let tx;
 
+            tx = await tokenContract.approve(
+                ContractAddress.MARKETPLACE,
+                amount
+            );
+
+            await tx.wait();
+
             if (status === 1) {
                 tx = await marketplaceContract.buyNFT(
                     nftAddress,

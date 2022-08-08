@@ -1,35 +1,35 @@
-import PropTypes from "prop-types";
 import TopSeller from "@components/top-seller/layout-02";
-import { IDType, ImageType } from "@utils/types";
+import { useEffect, useState } from "react";
 
-const BidsTabContent = ({ bids }) => (
-    <div>
-        {bids?.map((bid) => (
-            <TopSeller
-                key={bid.id}
-                name={bid.user.name}
-                eth={bid.amount}
-                path={bid.user.slug}
-                time={bid.bidAt}
-                image={{ src: bid.user.image.src, width: 44, height: 44 }}
-            />
-        ))}
-    </div>
-);
+const BidsTabContent = ({ orders }) => {
+    const [lastOrder, setLastOrder] = useState();
 
-BidsTabContent.propTypes = {
-    bids: PropTypes.arrayOf(
-        PropTypes.shape({
-            id: IDType.isRequired,
-            user: PropTypes.shape({
-                name: PropTypes.string.isRequired,
-                slug: PropTypes.string.isRequired,
-                image: ImageType.isRequired,
-            }),
-            amount: PropTypes.string.isRequired,
-            bidAt: PropTypes.string.isRequired,
-        })
-    ),
+    useEffect(() => {
+        if (!orders) return;
+        setLastOrder(orders[orders.length - 1]);
+    }, [orders]);
+
+    return (
+        <div>
+            {lastOrder?.subOrders
+                .slice()
+                .reverse()
+                .map((order) => (
+                    <TopSeller
+                        key={order.created}
+                        name={order.account}
+                        eth={order.price}
+                        path={"/"}
+                        time={order.created}
+                        image={{
+                            src: "/images/avatar/default.png",
+                            width: 44,
+                            height: 44,
+                        }}
+                    />
+                ))}
+        </div>
+    );
 };
 
 export default BidsTabContent;
