@@ -54,7 +54,7 @@ const PlaceBidModal = ({
                     tokenAddress,
                     amount
                 );
-                type = "accepted";
+                type = "buy";
             } else if (status === 2) {
                 tx = await marketplaceContract.offerNFT(
                     nftAddress,

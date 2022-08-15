@@ -6,7 +6,7 @@ import { formatTokenAmount } from "@utils/orders";
 import { formatAddress } from "@utils/address";
 import { formatTimeDifference, isAddressSame } from "@utils/formatter";
 import Button from "@ui/button";
-import AccceptBidModal from "@components/modals/acceptbid-modal";
+import AcceptOfferModal from "@components/modals/acceptoffer-modal";
 import { useState } from "react";
 import { useUser } from "src/contexts/UserContext";
 
@@ -21,6 +21,7 @@ const TopSeller = ({
     creator,
     nftAddress,
     tokenId,
+    orderStatus,
 }) => {
     const [openModal, setOpenModal] = useState(false);
     const { account } = useUser();
@@ -46,15 +47,19 @@ const TopSeller = ({
                 <div className="top-seller-content">
                     <span>
                         {type === "fixed"
-                            ? "List with "
+                            ? "Listed with "
                             : type === "auction"
-                            ? "Auction with "
+                            ? "Auction started with "
                             : type === "offer"
-                            ? "Offer with "
+                            ? "Offered with "
                             : type === "bid"
                             ? "Bid with "
-                            : type === "accepted"
-                            ? "Buy with "
+                            : type === "buy"
+                            ? "Bought with "
+                            : type === "offerAccept"
+                            ? "Accepted with "
+                            : type === "auctionEnd"
+                            ? "Acution ended with "
                             : ""}
                         {eth && <>{formatTokenAmount(eth)}wETH by</>}
                         <Anchor path={path}>{formatAddress(name)}</Anchor>
@@ -66,18 +71,20 @@ const TopSeller = ({
                     )}
                 </div>
 
-                {type === "offer" && isAddressSame(creator, account) && (
-                    <Button
-                        color="primary-alta"
-                        size="small"
-                        className="ml--30"
-                        onClick={() => setOpenModal(true)}
-                    >
-                        Accept
-                    </Button>
-                )}
+                {type === "offer" &&
+                    isAddressSame(creator, account) &&
+                    orderStatus !== null && (
+                        <Button
+                            color="primary-alta"
+                            size="small"
+                            className="ml--30"
+                            onClick={() => setOpenModal(true)}
+                        >
+                            Accept
+                        </Button>
+                    )}
             </div>
-            <AccceptBidModal
+            <AcceptOfferModal
                 open={openModal}
                 handleClose={() => setOpenModal(false)}
                 nftAddress={nftAddress}

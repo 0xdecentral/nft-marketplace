@@ -148,7 +148,11 @@ export const createSubOrder = async (id, data) => {
     } else {
         const order = existingOrder.orders[existingOrder.orders.length - 1];
 
-        if (data.type === "accepted") {
+        if (
+            data.type === "buy" ||
+            data.type === "offerAccept" ||
+            data.type === "auctionEnd"
+        ) {
             order.acceptedAccount = data.account;
             order.acceptedAmount = data.price;
 

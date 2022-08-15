@@ -29,7 +29,9 @@ export const formatTimeDifference = (time) => {
 
     if (days) timeString = days + "d ";
     if (hours) timeString += hours + "h ";
-    if (!days && !hours && minutes) timeString = minutes + "m ";
+    if (!timeString && minutes) timeString = minutes + "m ";
+
+    if (!timeString) return "Just now";
 
     return timeString + "ago";
 };

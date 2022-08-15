@@ -10,46 +10,32 @@ import { useUser } from "src/contexts/UserContext";
 import { formatTokenAmount } from "@utils/orders";
 import { formatAddress } from "@utils/address";
 
-const AcceptBidModal = ({
+const AcceptOfferModal = ({
     nftAddress,
     tokenId,
     handleClose,
+    currentPrice,
     open,
-    info,
-    finalizedAuctionLabel,
+    offerer,
 }) => {
     const { erc1155Contract, tokenContract, marketplaceContract } =
         useEthereum();
     const { account } = useUser();
 
-    const [auctionInfo, setAuctionInfo] = useState();
-
-    useEffect(() => {
-        if (!info?.lastOrder) return;
-
-        const lastSubOrders = info.lastOrder.subOrders;
-        const lastSubOrder = lastSubOrders[lastSubOrders.length - 1];
-
-        setAuctionInfo({
-            bidder: lastSubOrder.account,
-            creator: info.lastOrder.creator,
-            price: lastSubOrder.price,
-        });
-    }, [info?.lastOrder]);
-
     const handleAcceptOffer = async () => {
         try {
-            // const tx = await marketplaceContract.resultAuction(
-            //     nftAddress,
-            //     tokenId
-            // );
+            const tx = await marketplaceContract.acceptOfferNFT(
+                nftAddress,
+                tokenId,
+                offerer
+            );
 
-            // const res = await tx.wait();
+            const res = await tx.wait();
 
             await createSubOrder(`${nftAddress}-${tokenId}`, {
-                account: auctionInfo?.bidder,
+                account: offerer,
                 price: formatTokenAmount(currentPrice, false),
-                type: "auctionEnd",
+                type: "offerAccept",
             });
         } catch (err) {
             console.log("error:", err);
@@ -74,27 +60,18 @@ const AcceptBidModal = ({
                 <i className="feather-x" />
             </button>
             <Modal.Header>
-                <h3 className="modal-title">{finalizedAuctionLabel}</h3>
+                <h3 className="modal-title">Accept Offer</h3>
             </Modal.Header>
             <Modal.Body>
                 <div className="placebid-form-box">
                     <div className="d-flex justify-content-between">
-                        <h6 className="title">NFT owner:</h6>
-                        <p className="title">
-                            {formatAddress(auctionInfo?.creator)}
-                        </p>
-                    </div>
-                    <div className="d-flex justify-content-between">
-                        <h6 className="title">Bidder:</h6>
-                        <p className="title">
-                            {formatAddress(auctionInfo?.bidder)}
-                        </p>
+                        <h6 className="title">Offerer</h6>
+                        <p className="title">{formatAddress(offerer)}</p>
                     </div>
                     <div className="d-flex justify-content-between">
                         <h6 className="title">Price</h6>
                         <p className="title">
-                            {formatTokenAmount(auctionInfo?.price)}{" "}
-                            <span>wETH</span>
+                            {currentPrice} <span>wETH</span>
                         </p>
                     </div>
                     <div className="bit-continue-button">
@@ -104,7 +81,7 @@ const AcceptBidModal = ({
                             className="mt-5"
                             onClick={handleAcceptOffer}
                         >
-                            Get
+                            Accept offer
                         </Button>
                     </div>
                 </div>
@@ -113,8 +90,8 @@ const AcceptBidModal = ({
     );
 };
 
-AcceptBidModal.propTypes = {
+AcceptOfferModal.propTypes = {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
 };
-export default AcceptBidModal;
+export default AcceptOfferModal;

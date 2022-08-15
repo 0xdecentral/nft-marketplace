@@ -11,11 +11,11 @@ export const getStartingPrice = (orders) => {
     return tokenAmount.fixed();
 };
 
-export const formatTokenAmount = (amount) => {
+export const formatTokenAmount = (amount, isFixed = true) => {
     //todo
     const decimals = 18;
 
-    const tokenAmount = new TokenAmount(amount, decimals);
+    const tokenAmount = new TokenAmount(amount, decimals, isFixed);
 
-    return tokenAmount.fixed();
+    return isFixed ? tokenAmount.fixed() : tokenAmount.toWei().toString();
 };

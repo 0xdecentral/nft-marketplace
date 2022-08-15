@@ -34,6 +34,7 @@ const BidsTabContent = ({ orderInfo }) => {
                         creator={lastOrder.creator}
                         nftAddress={orderInfo.address}
                         tokenId={orderInfo.tokenId}
+                        orderStatus={orderInfo.status}
                     />
                 ))}
         </div>

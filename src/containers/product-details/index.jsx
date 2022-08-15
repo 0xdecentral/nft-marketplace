@@ -19,6 +19,7 @@ import { getStartingPrice } from "@utils/orders";
 import { formatAddress, getESLink } from "@utils/address";
 import CountdownTimer from "@ui/countdown/layout-01";
 import { isTimeAvailable } from "@utils/utils";
+import AcceptBidModal from "@components/modals/acceptbid-modal";
 
 // Demo Image
 
@@ -27,12 +28,20 @@ const ProductDetailsArea = ({ space, className, product }) => {
 
     const [showBidModal, setShowBidModal] = useState(0);
     const [showListModal, setShowListModal] = useState(false);
+    const [showAcceptModal, setShowAcceptModal] = useState(false);
+
     const [info, setInfo] = useState({});
+    const [finalizedAuctionLabel, setFinalizedAuctionLabel] = useState();
 
     const isOwner = isAddressSame(product.owner, account);
     const isListed = product.status === "fixed";
     const isAuctionStarted = product.status === "auction";
+
     const isListedOrAuctionStarted = isListed || isAuctionStarted;
+    const isValidTime = isTimeAvailable(product?.listingEndTime);
+
+    const isValidListedOrAuctionStarted =
+        (isListed || isAuctionStarted) && isValidTime;
 
     useEffect(() => {
         if (!product) return;
@@ -40,14 +49,33 @@ const ProductDetailsArea = ({ space, className, product }) => {
             if (!res) return;
 
             const orders = res.orders;
+            const lastOrder = orders[orders.length - 1];
+
+            const auctionFinalized = !isTimeAvailable(product?.listingEndTime);
+
+            if (auctionFinalized) {
+                const finalizedAuctionLabel = "";
+                const subOrders = lastOrder.subOrders;
+
+                if (isOwner) finalizedAuctionLabel = "Get your fund";
+                else if (
+                    isAddressSame(
+                        account,
+                        subOrders[subOrders.length - 1].account
+                    )
+                )
+                    finalizedAuctionLabel = "Get your NFT";
+
+                setFinalizedAuctionLabel(finalizedAuctionLabel);
+            }
 
             setInfo({
                 startingPrice: getStartingPrice(res.orders),
-                lastOrder: orders[orders.length - 1],
+                lastOrder,
                 orderInfo: res,
             });
         });
-    }, [product]);
+    }, [product, account]);
 
     return (
         <>
@@ -95,7 +123,7 @@ const ProductDetailsArea = ({ space, className, product }) => {
                                     </a>
                                 </h6>
 
-                                {isListedOrAuctionStarted && (
+                                {isValidListedOrAuctionStarted && (
                                     <div>
                                         <h6>
                                             Sale ends{" "}
@@ -108,6 +136,7 @@ const ProductDetailsArea = ({ space, className, product }) => {
 
                                 <div className="mb-3">
                                     {product?.listingEndTime &&
+                                    product?.status &&
                                     isTimeAvailable(product?.listingEndTime) ? (
                                         <CountdownTimer
                                             date={
@@ -139,7 +168,17 @@ const ProductDetailsArea = ({ space, className, product }) => {
                                         List NFT
                                     </Button>
                                 )}
-                                {!isOwner && account && (
+
+                                {finalizedAuctionLabel && (
+                                    <Button
+                                        color="primary-alta"
+                                        onClick={() => setShowAcceptModal(true)}
+                                    >
+                                        {finalizedAuctionLabel}
+                                    </Button>
+                                )}
+
+                                {!isOwner && account && isValidTime && (
                                     <>
                                         {isListed ? (
                                             <div className="d-md-flex">
@@ -173,6 +212,7 @@ const ProductDetailsArea = ({ space, className, product }) => {
                                         ) : null}
                                     </>
                                 )}
+
                                 <div className="rn-bid-details">
                                     <BidTab
                                         orderInfo={info?.orderInfo}
@@ -211,6 +251,15 @@ const ProductDetailsArea = ({ space, className, product }) => {
                 nftAddress={product.address}
                 tokenId={product.tokenId}
                 tokenBalance={product.amount}
+            />
+
+            <AcceptBidModal
+                open={showAcceptModal}
+                handleClose={() => setShowAcceptModal(false)}
+                nftAddress={product.address}
+                tokenId={product.tokenId}
+                info={info}
+                finalizedAuctionLabel={finalizedAuctionLabel}
             />
         </>
     );
