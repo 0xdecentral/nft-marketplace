@@ -2,11 +2,12 @@ import PropTypes from "prop-types";
 import Modal from "react-bootstrap/Modal";
 import Button from "@ui/button";
 import { useEthereum } from "src/contexts/EthereumContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TokenAmount from "src/lib/TokenAmount";
 import { ContractAddress } from "@assets/constants/addresses";
 import { createSubOrder } from "src/services/firestore";
 import { useUser } from "src/contexts/UserContext";
+import { formatTokenAmount } from "@utils/orders";
 
 const PlaceBidModal = ({
     status,
@@ -14,12 +15,17 @@ const PlaceBidModal = ({
     tokenId,
     tokenBalance,
     handleClose,
+    initialPrice,
 }) => {
-    const [price, setPrice] = useState(0);
+    const [price, setPrice] = useState(initialPrice);
 
     const { erc1155Contract, tokenContract, marketplaceContract } =
         useEthereum();
     const { account } = useUser();
+
+    useEffect(() => {
+        setPrice(formatTokenAmount(initialPrice));
+    }, [initialPrice]);
 
     const handlePlaceBid = async () => {
         //todo
@@ -120,9 +126,13 @@ const PlaceBidModal = ({
                                 <div className="bid-content-top">
                                     <div className="bid-content-left">
                                         <input
+                                            disabled={
+                                                status === 1 ? true : false
+                                            }
                                             id="value"
                                             type="text"
                                             name="value"
+                                            value={price}
                                             onChange={handleChange}
                                         />
                                         <span>wETH</span>

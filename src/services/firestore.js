@@ -96,6 +96,8 @@ export const getOrder = async (id) => {
 export const createOrUpdateOrder = async (id, data) => {
     await updateNFT(id, {
         status: data.type,
+        currentPrice: data.price,
+        listingEndTime: data.endTime,
     });
 
     const orderRef = doc(db, "orders", id.toLowerCase());

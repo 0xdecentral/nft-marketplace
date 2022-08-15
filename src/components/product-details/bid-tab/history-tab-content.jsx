@@ -1,17 +1,10 @@
 import TopSeller from "@components/top-seller/layout-02";
 import { useEffect, useState } from "react";
 
-const HistoryTabContent = ({ orders }) => {
-    const [lastOrder, setLastOrder] = useState();
-
-    useEffect(() => {
-        if (!orders) return;
-        setLastOrder(orders[orders.length - 1]);
-    }, [orders]);
-
+const HistoryTabContent = ({ orderInfo }) => {
     return (
         <div>
-            {orders
+            {orderInfo?.orders
                 ?.slice()
                 .reverse()
                 .map((order) => {

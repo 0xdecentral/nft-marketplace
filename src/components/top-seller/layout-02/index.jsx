@@ -4,9 +4,27 @@ import clsx from "clsx";
 import Anchor from "@ui/anchor";
 import { formatTokenAmount } from "@utils/orders";
 import { formatAddress } from "@utils/address";
-import { formatTimeDifference } from "@utils/formatter";
+import { formatTimeDifference, isAddressSame } from "@utils/formatter";
+import Button from "@ui/button";
+import AccceptBidModal from "@components/modals/acceptbid-modal";
+import { useState } from "react";
+import { useUser } from "src/contexts/UserContext";
 
-const TopSeller = ({ name, time, path, image, eth, isVarified, type }) => {
+const TopSeller = ({
+    name,
+    time,
+    path,
+    image,
+    eth,
+    isVarified,
+    type,
+    creator,
+    nftAddress,
+    tokenId,
+}) => {
+    const [openModal, setOpenModal] = useState(false);
+    const { account } = useUser();
+
     return (
         <div className="top-seller-inner-one">
             <div className="top-seller-wrapper">
@@ -47,7 +65,26 @@ const TopSeller = ({ name, time, path, image, eth, isVarified, type }) => {
                         </span>
                     )}
                 </div>
+
+                {type === "offer" && isAddressSame(creator, account) && (
+                    <Button
+                        color="primary-alta"
+                        size="small"
+                        className="ml--30"
+                        onClick={() => setOpenModal(true)}
+                    >
+                        Accept
+                    </Button>
+                )}
             </div>
+            <AccceptBidModal
+                open={openModal}
+                handleClose={() => setOpenModal(false)}
+                nftAddress={nftAddress}
+                tokenId={tokenId}
+                currentPrice={formatTokenAmount(eth)}
+                offerer={name}
+            />
         </div>
     );
 };

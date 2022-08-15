@@ -18,7 +18,7 @@ const authorization =
     "Basic " + Buffer.from(projectId + ":" + projectSecret).toString("base64");
 
 const client = create({
-    url: "https://ipfs.infura.io:5001",
+    url: "https://hello.infura-ipfs.io",
     headers: {
         authorization,
     },

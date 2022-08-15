@@ -18,5 +18,10 @@
         "id": 4,
         "text": "Contact",
         "path": "/contact"
+    },
+    {
+        "id": 5,
+        "text": "Create",
+        "path": "/create"
     }
 ]

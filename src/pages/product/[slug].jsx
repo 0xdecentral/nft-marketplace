@@ -26,7 +26,7 @@ const ProductDetails = ({ product, recentViewProducts, relatedProducts }) => (
             ) : (
                 <>
                     <ProductDetailsArea product={product} />
-                    <ProductArea
+                    {/* <ProductArea
                         data={{
                             section_title: { title: "Recent View" },
                             products: recentViewProducts,
@@ -37,7 +37,7 @@ const ProductDetails = ({ product, recentViewProducts, relatedProducts }) => (
                             section_title: { title: "Related Item" },
                             products: relatedProducts,
                         }}
-                    />
+                    /> */}
                 </>
             )}
         </main>

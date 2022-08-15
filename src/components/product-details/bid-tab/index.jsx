@@ -8,7 +8,7 @@ import BidsTabContent from "./bids-tab-content";
 import DetailsTabContent from "./details-tab-content";
 import HistoryTabContent from "./history-tab-content";
 
-const BidTab = ({ className, orders, owner, properties, tags, history }) => (
+const BidTab = ({ className, orderInfo, owner, properties, tags, history }) => (
     <TabContainer defaultActiveKey="nav-home">
         <div className={clsx("tab-wrapper-one", className)}>
             <nav className="tab-button-one">
@@ -26,7 +26,7 @@ const BidTab = ({ className, orders, owner, properties, tags, history }) => (
             </nav>
             <TabContent className="rn-bid-content">
                 <TabPane eventKey="nav-home">
-                    <BidsTabContent orders={orders} />
+                    <BidsTabContent orderInfo={orderInfo} />
                 </TabPane>
                 <TabPane eventKey="nav-profile">
                     <DetailsTabContent
@@ -36,7 +36,7 @@ const BidTab = ({ className, orders, owner, properties, tags, history }) => (
                     />
                 </TabPane>
                 <TabPane eventKey="nav-contact">
-                    <HistoryTabContent orders={orders} />
+                    <HistoryTabContent orderInfo={orderInfo} />
                 </TabPane>
             </TabContent>
         </div>

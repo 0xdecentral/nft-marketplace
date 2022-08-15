@@ -12,6 +12,7 @@ import { ImageType } from "@utils/types";
 import PlaceBidModal from "@components/modals/placebid-modal";
 import { ContractAddress } from "@assets/constants/addresses";
 import ListModal from "@components/modals/list-modal";
+import { isTimeAvailable } from "@utils/utils";
 
 const Product = ({
     overlay,
@@ -56,7 +57,11 @@ const Product = ({
                             />
                         </Anchor>
                     )}
-                    {auction_date && <CountdownTimer date={auction_date} />}
+                    {auction_date && isTimeAvailable(auction_date) ? (
+                        <CountdownTimer date={auction_date} />
+                    ) : (
+                        <></>
+                    )}
                     {placeBid && (
                         <Button
                             onClick={() => setShowListModal(true)}
@@ -66,30 +71,11 @@ const Product = ({
                         </Button>
                     )}
                 </div>
-                <div className="product-share-wrapper">
-                    <div className="profile-share">
-                        {authors?.map((client) => (
-                            <ClientAvatar
-                                key={client.name}
-                                slug={client.slug}
-                                name={client.name}
-                                image={client.image}
-                            />
-                        ))}
-                        <Anchor
-                            className="more-author-text"
-                            path={`/product/${slug}`}
-                        >
-                            {bitCount}+ Place Bit.
-                        </Anchor>
-                    </div>
-                    {!disableShareDropdown && <ShareDropdown />}
-                </div>
                 <Anchor path={`/product/${slug}`}>
-                    <span className="product-name">{title}</span>
+                    <span className="product-name mt-5">{title}</span>
                 </Anchor>
                 {/* <span className="latest-bid">Latest bid: {latestBid}</span> */}
-                {/* <ProductBid price={price} likeCount={likeCount} /> */}
+                {price && <ProductBid price={price} likeCount={likeCount} />}
             </div>
 
             <ListModal
@@ -103,32 +89,32 @@ const Product = ({
     );
 };
 
-Product.propTypes = {
-    overlay: PropTypes.bool,
-    title: PropTypes.string.isRequired,
-    slug: PropTypes.string.isRequired,
-    latestBid: PropTypes.string.isRequired,
-    price: PropTypes.shape({
-        amount: PropTypes.number.isRequired,
-        currency: PropTypes.string.isRequired,
-    }).isRequired,
-    likeCount: PropTypes.number.isRequired,
-    auction_date: PropTypes.string,
-    image: PropTypes.any,
-    authors: PropTypes.arrayOf(
-        PropTypes.shape({
-            name: PropTypes.string.isRequired,
-            slug: PropTypes.string.isRequired,
-            image: ImageType.isRequired,
-        })
-    ),
-    bitCount: PropTypes.number,
-    placeBid: PropTypes.bool,
-    disableShareDropdown: PropTypes.bool,
-};
+// Product.propTypes = {
+//     overlay: PropTypes.bool,
+//     title: PropTypes.string.isRequired,
+//     slug: PropTypes.string.isRequired,
+//     latestBid: PropTypes.string.isRequired,
+//     price: PropTypes.shape({
+//         amount: PropTypes.number.isRequired,
+//         currency: PropTypes.string.isRequired,
+//     }).isRequired,
+//     likeCount: PropTypes.number.isRequired,
+//     auction_date: PropTypes.string,
+//     image: PropTypes.any,
+//     authors: PropTypes.arrayOf(
+//         PropTypes.shape({
+//             name: PropTypes.string.isRequired,
+//             slug: PropTypes.string.isRequired,
+//             image: ImageType.isRequired,
+//         })
+//     ),
+//     bitCount: PropTypes.number,
+//     placeBid: PropTypes.bool,
+//     disableShareDropdown: PropTypes.bool,
+// };
 
-Product.defaultProps = {
-    overlay: false,
-};
+// Product.defaultProps = {
+//     overlay: false,
+// };
 
 export default Product;

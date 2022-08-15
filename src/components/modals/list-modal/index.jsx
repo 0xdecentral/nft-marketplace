@@ -7,7 +7,7 @@ import TokenAmount from "src/lib/TokenAmount";
 import { ContractAddress } from "@assets/constants/addresses";
 import clsx from "clsx";
 import { convertToUnixTimestamp, currentUnixTimestamp } from "@utils/formatter";
-import { createOrder, createOrUpdateOrder } from "src/services/firestore";
+import { createOrUpdateOrder } from "src/services/firestore";
 import { useUser } from "src/contexts/UserContext";
 
 const ListModal = ({

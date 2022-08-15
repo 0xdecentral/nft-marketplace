@@ -133,7 +133,7 @@ const ExploreProductArea = ({ className, space, data, hasFilter }) => {
                 <div className="row g-5">
                     {data.products.length > 0 ? (
                         <>
-                            {data.products.slice(0, 10).map((prod) => (
+                            {data.products.map((prod) => (
                                 <div
                                     key={prod.id}
                                     className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
@@ -145,13 +145,18 @@ const ExploreProductArea = ({ className, space, data, hasFilter }) => {
                                         nftAddress={prod.address}
                                         tokenId={prod.tokenId}
                                         tokenBalance={prod.amount}
+                                        price={{
+                                            amount: prod.currentPrice,
+                                            currency: "wETH",
+                                        }}
+                                        auction_date={
+                                            prod.listingEndTime * 1000
+                                        }
                                         //old
                                         overlay
                                         placeBid={!!data.placeBid}
                                         latestBid={prod.latestBid}
-                                        price={prod.price}
                                         likeCount={prod.likeCount}
-                                        auction_date={prod.auction_date}
                                         authors={prod.authors}
                                         bitCount={prod.bitCount}
                                     />

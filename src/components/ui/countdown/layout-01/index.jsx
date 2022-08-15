@@ -1,11 +1,15 @@
 import Countdown, { zeroPad } from "react-countdown";
 import PropTypes from "prop-types";
 
-const CountdownTimer = ({ date }) => {
+const CountdownTimer = ({ date, isLeft }) => {
     const renderer = ({ days, hours, minutes, seconds, completed }) => {
         if (completed) return <div>Completed</div>;
         return (
-            <div className="countdown">
+            <div
+                className={`countdown${
+                    isLeft ? " justify-content-lg-start" : ""
+                }`}
+            >
                 <div className="countdown-container days">
                     <span className="countdown-value">{days}</span>
                     <span className="countdown-heading">D&apos;s</span>
@@ -25,6 +29,7 @@ const CountdownTimer = ({ date }) => {
             </div>
         );
     };
+
     return <Countdown date={new Date(date)} renderer={renderer} />;
 };
 

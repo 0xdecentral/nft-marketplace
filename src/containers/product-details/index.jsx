@@ -17,6 +17,8 @@ import ListModal from "@components/modals/list-modal";
 import { getOrder } from "src/services/firestore";
 import { getStartingPrice } from "@utils/orders";
 import { formatAddress, getESLink } from "@utils/address";
+import CountdownTimer from "@ui/countdown/layout-01";
+import { isTimeAvailable } from "@utils/utils";
 
 // Demo Image
 
@@ -47,7 +49,6 @@ const ProductDetailsArea = ({ space, className, product }) => {
         });
     }, [product]);
 
-    console.log("I am info!!!!!", info);
     return (
         <>
             <div
@@ -104,6 +105,20 @@ const ProductDetailsArea = ({ space, className, product }) => {
                                         </h6>
                                     </div>
                                 )}
+
+                                <div className="mb-3">
+                                    {product?.listingEndTime &&
+                                    isTimeAvailable(product?.listingEndTime) ? (
+                                        <CountdownTimer
+                                            date={
+                                                product?.listingEndTime * 1000
+                                            }
+                                            isLeft={true}
+                                        />
+                                    ) : (
+                                        <></>
+                                    )}
+                                </div>
                                 {/* <div className="catagory-collection">
                                     <ProductCategory
                                     owner={
@@ -124,7 +139,7 @@ const ProductDetailsArea = ({ space, className, product }) => {
                                         List NFT
                                     </Button>
                                 )}
-                                {!isOwner && (
+                                {!isOwner && account && (
                                     <>
                                         {isListed ? (
                                             <div className="d-md-flex">
@@ -160,7 +175,7 @@ const ProductDetailsArea = ({ space, className, product }) => {
                                 )}
                                 <div className="rn-bid-details">
                                     <BidTab
-                                        orders={info?.orderInfo?.orders}
+                                        orderInfo={info?.orderInfo}
                                         owner={
                                             product.owner
                                                 ? product.owner
@@ -187,6 +202,7 @@ const ProductDetailsArea = ({ space, className, product }) => {
                 nftAddress={product.address}
                 tokenId={product.tokenId}
                 tokenBalance={product.amount}
+                initialPrice={showBidModal === 1 ? product.currentPrice : 0}
             />
 
             <ListModal
@@ -200,30 +216,30 @@ const ProductDetailsArea = ({ space, className, product }) => {
     );
 };
 
-ProductDetailsArea.propTypes = {
-    space: PropTypes.oneOf([1, 2]),
-    className: PropTypes.string,
-    product: PropTypes.shape({
-        // title: PropTypes.string.isRequired,
-        // likeCount: PropTypes.number,
-        // price: PropTypes.shape({
-        //     amount: PropTypes.number.isRequired,
-        //     currency: PropTypes.string.isRequired,
-        // }).isRequired,
-        // owner: PropTypes.shape({}),
-        // collection: PropTypes.shape({}),
-        // bids: PropTypes.arrayOf(PropTypes.shape({})),
-        // properties: PropTypes.arrayOf(PropTypes.shape({})),
-        // tags: PropTypes.arrayOf(PropTypes.shape({})),
-        // history: PropTypes.arrayOf(PropTypes.shape({})),
-        // highest_bid: PropTypes.shape({}),
-        // auction_date: PropTypes.string,
-        // images: PropTypes.arrayOf(ImageType),
-    }),
-};
+// ProductDetailsArea.propTypes = {
+//     space: PropTypes.oneOf([1, 2]),
+//     className: PropTypes.string,
+//     product: PropTypes.shape({
+//         title: PropTypes.string.isRequired,
+//         likeCount: PropTypes.number,
+//         price: PropTypes.shape({
+//             amount: PropTypes.number.isRequired,
+//             currency: PropTypes.string.isRequired,
+//         }).isRequired,
+//         owner: PropTypes.shape({}),
+//         collection: PropTypes.shape({}),
+//         bids: PropTypes.arrayOf(PropTypes.shape({})),
+//         properties: PropTypes.arrayOf(PropTypes.shape({})),
+//         tags: PropTypes.arrayOf(PropTypes.shape({})),
+//         history: PropTypes.arrayOf(PropTypes.shape({})),
+//         highest_bid: PropTypes.shape({}),
+//         auction_date: PropTypes.string,
+//         images: PropTypes.arrayOf(ImageType),
+//     }),
+// };
 
-ProductDetailsArea.defaultProps = {
-    space: 1,
-};
+// ProductDetailsArea.defaultProps = {
+//     space: 1,
+// };
 
 export default ProductDetailsArea;
