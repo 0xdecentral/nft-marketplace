@@ -13,27 +13,49 @@ import { normalizedData } from "@utils/methods";
 
 // Demo Data
 import homepageData from "../data/homepages/home-01.json";
-import productData from "../data/products.json";
 import sellerData from "../data/sellers.json";
 import collectionsData from "../data/collections.json";
+import { useEffect, useMemo, useState } from "react";
+import { getNfts } from "src/services/firestore";
 
 export async function getStaticProps() {
     return { props: { className: "template-color-1" } };
 }
 
 const Home = () => {
+    const [productData, setProductData] = useState([]);
+
+    useEffect(() => {
+        getNfts().then((res) => {
+            const productData = res.map((nft) => nft.data());
+
+            setProductData(productData);
+        });
+    }, []);
+
     const content = normalizedData(homepageData?.content || []);
-    const liveAuctionData = productData.filter(
-        (prod) =>
-            prod?.auction_date && new Date() <= new Date(prod?.auction_date)
+
+    const liveAuctionData = useMemo(
+        () =>
+            productData.filter(
+                (prod) =>
+                    prod?.listing?.status &&
+                    new Date() <= new Date(prod?.listing?.endTime * 10000)
+            ),
+        [productData]
     );
-    const newestData = productData
-        .sort(
-            (a, b) =>
-                Number(new Date(b.published_at)) -
-                Number(new Date(a.published_at))
-        )
-        .slice(0, 5);
+
+    const newestData = useMemo(
+        () =>
+            productData
+                .sort(
+                    (a, b) =>
+                        Number(new Date(a.created)) -
+                        Number(new Date(b.created))
+                )
+                .slice(0, 5),
+        [productData]
+    );
 
     return (
         <Wrapper>
@@ -48,31 +70,33 @@ const Home = () => {
                     }}
                 />
                 <ServiceArea data={content["service-section"]} />
+                {/* <ExploreProductArea
+                    data={{
+                        section_title: {
+                            title: "Explore Product",
+                        },
+                        products: productData,
+                    }}
+                /> */}
                 <NewestItmesArea
                     data={{
                         ...content["newest-section"],
                         products: newestData,
                     }}
                 />
-                <TopSellerArea
+                {/* <TopSellerArea
                     data={{
                         ...content["top-sller-section"],
                         sellers: sellerData,
                     }}
-                />
-                <ExploreProductArea
-                    data={{
-                        ...content["explore-product-section"],
-                        products: productData,
-                    }}
-                    hasFilter={false}
-                />
-                <CollectionArea
+                /> */}
+
+                {/* <CollectionArea
                     data={{
                         ...content["collection-section"],
                         collections: collectionsData.slice(0, 4),
                     }}
-                />
+                /> */}
             </main>
             <Footer />
         </Wrapper>

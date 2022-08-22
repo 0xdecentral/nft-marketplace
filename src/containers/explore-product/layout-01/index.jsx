@@ -146,11 +146,11 @@ const ExploreProductArea = ({ className, space, data, hasFilter }) => {
                                         tokenId={prod.tokenId}
                                         tokenBalance={prod.amount}
                                         price={{
-                                            amount: prod.currentPrice,
+                                            amount: prod?.listing?.currentPrice,
                                             currency: "wETH",
                                         }}
                                         auction_date={
-                                            prod.listingEndTime * 1000
+                                            prod?.listing?.endTime * 1000
                                         }
                                         //old
                                         overlay

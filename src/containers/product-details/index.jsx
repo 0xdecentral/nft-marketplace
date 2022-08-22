@@ -34,11 +34,13 @@ const ProductDetailsArea = ({ space, className, product }) => {
     const [finalizedAuctionLabel, setFinalizedAuctionLabel] = useState();
 
     const isOwner = isAddressSame(product.owner, account);
-    const isListed = product.status === "fixed";
-    const isAuctionStarted = product.status === "auction";
+    const listing = product.listing;
+
+    const isListed = listing?.status === "fixed";
+    const isAuctionStarted = listing?.status === "auction";
 
     const isListedOrAuctionStarted = isListed || isAuctionStarted;
-    const isValidTime = isTimeAvailable(product?.listingEndTime);
+    const isValidTime = isTimeAvailable(listing?.endTime);
 
     const isValidListedOrAuctionStarted =
         (isListed || isAuctionStarted) && isValidTime;
@@ -51,7 +53,7 @@ const ProductDetailsArea = ({ space, className, product }) => {
             const orders = res.orders;
             const lastOrder = orders[orders.length - 1];
 
-            const auctionFinalized = !isTimeAvailable(product?.listingEndTime);
+            const auctionFinalized = !isTimeAvailable(listing?.endTime);
 
             if (auctionFinalized) {
                 const finalizedAuctionLabel = "";
@@ -135,13 +137,11 @@ const ProductDetailsArea = ({ space, className, product }) => {
                                 )}
 
                                 <div className="mb-3">
-                                    {product?.listingEndTime &&
-                                    product?.status &&
-                                    isTimeAvailable(product?.listingEndTime) ? (
+                                    {listing?.endTime &&
+                                    listing?.status &&
+                                    isTimeAvailable(listing?.endTime) ? (
                                         <CountdownTimer
-                                            date={
-                                                product?.listingEndTime * 1000
-                                            }
+                                            date={listing?.endTime * 1000}
                                             isLeft={true}
                                         />
                                     ) : (
@@ -242,7 +242,9 @@ const ProductDetailsArea = ({ space, className, product }) => {
                 nftAddress={product.address}
                 tokenId={product.tokenId}
                 tokenBalance={product.amount}
-                initialPrice={showBidModal === 1 ? product.currentPrice : 0}
+                initialPrice={
+                    showBidModal === 1 ? product.listing.currentPrice : 0
+                }
             />
 
             <ListModal

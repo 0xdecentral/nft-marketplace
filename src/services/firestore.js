@@ -1,4 +1,4 @@
-import { currentUnixTimestamp } from "@utils/formatter";
+import { convertToUnixTimestamp, currentUnixTimestamp } from "@utils/formatter";
 import { initializeApp } from "firebase/app";
 import {
     getFirestore,
@@ -29,6 +29,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+const initialListing = {
+    startTime: null,
+    endtime: null,
+    currentPrice: 0,
+    status: null,
+};
+
 export const createUser = (address) => {
     const userRef = doc(db, "users", address.toLowerCase());
 
@@ -44,6 +51,8 @@ export const createNFT = (id, data) => {
     setDoc(nftRef, {
         created: serverTimestamp(),
         ...data,
+        listing: initialListing,
+        likeCount: 0,
     });
 };
 
@@ -95,9 +104,12 @@ export const getOrder = async (id) => {
 
 export const createOrUpdateOrder = async (id, data) => {
     await updateNFT(id, {
-        status: data.type,
-        currentPrice: data.price,
-        listingEndTime: data.endTime,
+        listing: {
+            startTime: convertToUnixTimestamp("now"),
+            endtime: data.endTime,
+            currentPrice: data.price,
+            status: data.type,
+        },
     });
 
     const orderRef = doc(db, "orders", id.toLowerCase());
@@ -160,7 +172,7 @@ export const createSubOrder = async (id, data) => {
 
             await updateNFT(id, {
                 owner: data.account,
-                status: null,
+                listing: initialListing,
             });
         }
 

@@ -43,18 +43,25 @@ const ProductArea = ({ space, className, data }) => (
                     {data.products.map((prod) => (
                         <div
                             key={prod.id}
-                            data-sal="slide-up"
-                            data-sal-delay="150"
-                            data-sal-duration="800"
                             className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
                         >
                             <Product
+                                image={{ src: prod.image }}
                                 title={prod.title}
-                                slug={prod.slug}
+                                slug={`${prod.address}-${prod.tokenId}`}
+                                nftAddress={prod.address}
+                                tokenId={prod.tokenId}
+                                tokenBalance={prod.amount}
+                                price={{
+                                    amount: prod?.listing?.currentPrice,
+                                    currency: "wETH",
+                                }}
+                                auction_date={prod?.listing?.endTime * 1000}
+                                //old
+                                overlay
+                                placeBid={!!data.placeBid}
                                 latestBid={prod.latestBid}
-                                price={prod.price}
                                 likeCount={prod.likeCount}
-                                image={prod.images?.[0]}
                                 authors={prod.authors}
                                 bitCount={prod.bitCount}
                             />

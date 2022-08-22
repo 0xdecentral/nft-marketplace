@@ -17,7 +17,7 @@ const UserDropdown = () => {
                 />
             </Anchor>
             <div className="rn-dropdown">
-                <div className="rn-inner-top">
+                {/* <div className="rn-inner-top">
                     <h4 className="title">
                         <Anchor path="/product">Christopher William</Anchor>
                     </h4>
@@ -41,7 +41,7 @@ const UserDropdown = () => {
                             <div className="button" />
                         </li>
                     </ul>
-                </div>
+                </div> */}
                 <ul className="list-inner">
                     <li>
                         <Anchor path="/author">My Profile</Anchor>

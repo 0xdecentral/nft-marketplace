@@ -44,69 +44,81 @@ const SliderOptions = {
     ],
 };
 
-const LiveExploreArea = ({ data, className, space }) => (
-    <div
-        className={clsx(
-            "rn-live-bidding-area",
-            space === 1 && "rn-section-gapTop",
-            className
-        )}
-    >
-        <div className="container">
-            {data?.section_title && (
-                <div className="row mb--50">
-                    <div className="col-lg-12">
-                        <SectionTitle {...data.section_title} />
-                    </div>
-                </div>
+const LiveExploreArea = ({ data, className, space }) => {
+    return (
+        <div
+            className={clsx(
+                "rn-live-bidding-area",
+                space === 1 && "rn-section-gapTop",
+                className
             )}
-            {data?.products && (
-                <div className="row">
-                    <div className="col-lg-12">
-                        <Slider
-                            options={SliderOptions}
-                            className="banner-one-slick slick-arrow-style-one rn-slick-dot-style slick-gutter-15"
-                        >
-                            {data.products.map((prod) => (
-                                <SliderItem
-                                    key={prod.id}
-                                    className="single-slide-product"
-                                >
-                                    <Product
-                                        overlay
-                                        placeBid={!!data.placeBid}
-                                        title={prod.title}
-                                        slug={prod.slug}
-                                        latestBid={prod.latestBid}
-                                        price={prod.price}
-                                        likeCount={prod.likeCount}
-                                        auction_date={prod.auction_date}
-                                        image={prod.images?.[0]}
-                                        authors={prod.authors}
-                                        bitCount={prod.bitCount}
-                                    />
-                                </SliderItem>
-                            ))}
-                        </Slider>
+        >
+            <div className="container">
+                {data?.section_title && (
+                    <div className="row mb--50">
+                        <div className="col-lg-12">
+                            <SectionTitle {...data.section_title} />
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
+                {data?.products && (
+                    <div className="row">
+                        <div className="col-lg-12">
+                            <Slider
+                                options={SliderOptions}
+                                className="banner-one-slick slick-arrow-style-one rn-slick-dot-style slick-gutter-15"
+                            >
+                                {data.products.map((prod) => (
+                                    <SliderItem
+                                        key={prod.image}
+                                        className="single-slide-product"
+                                    >
+                                        <Product
+                                            image={{ src: prod.image }}
+                                            title={prod.title}
+                                            slug={`${prod.address}-${prod.tokenId}`}
+                                            nftAddress={prod.address}
+                                            tokenId={prod.tokenId}
+                                            tokenBalance={prod.amount}
+                                            price={{
+                                                amount: prod.listing
+                                                    .currentPrice,
+                                                currency: "wETH",
+                                            }}
+                                            auction_date={
+                                                prod?.listing?.endTime * 1000
+                                            }
+                                            //old
+                                            overlay
+                                            placeBid={!!data.placeBid}
+                                            latestBid={prod.latestBid}
+                                            likeCount={prod.likeCount}
+                                            authors={prod.authors}
+                                            bitCount={prod.bitCount}
+                                        />
+                                    </SliderItem>
+                                ))}
+                            </Slider>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
-    </div>
-);
-
-LiveExploreArea.propTypes = {
-    className: PropTypes.string,
-    space: PropTypes.oneOf([1, 2]),
-    data: PropTypes.shape({
-        section_title: SectionTitleType,
-        products: PropTypes.arrayOf(ProductType).isRequired,
-        placeBid: PropTypes.bool,
-    }),
+    );
 };
 
-LiveExploreArea.defaultProps = {
-    space: 1,
-};
+// LiveExploreArea.propTypes = {
+//     className: PropTypes.string,
+//     space: PropTypes.oneOf([1, 2]),
+//     data: PropTypes.shape({
+//         section_title: SectionTitleType,
+//         products: PropTypes.arrayOf(ProductType).isRequired,
+//         placeBid: PropTypes.bool,
+//     }),
+// };
+
+// LiveExploreArea.defaultProps = {
+//     space: 1,
+// };
 
 export default LiveExploreArea;
