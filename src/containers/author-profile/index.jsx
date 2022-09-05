@@ -11,22 +11,29 @@ import { useEthereum } from "src/contexts/EthereumContext";
 import { useEffect, useState } from "react";
 import { fetchNFTs } from "src/lib/alchemy";
 import { useUser } from "src/contexts/UserContext";
+import { getNftsByCreator } from "src/services/firestore";
 
 const AuthorProfileArea = ({ className, data }) => {
     const onSaleProducts = shuffleArray(data.products).slice(0, 10);
     // const ownedProducts = shuffleArray(data.products).slice(0, 10);
-    const createdProducts = shuffleArray(data.products).slice(0, 10);
     const likedProducts = shuffleArray(data.products).slice(0, 10);
     const { erc1155Contract } = useEthereum();
     const { account, chainId } = useUser();
     const [ownedProducts, setOwnedProducts] = useState([]);
+    const [createdProducts, setCreatedProducts] = useState([]);
+
 
     useEffect(() => {
-        if (!account || !chainId) return;
-        fetchNFTs(account, chainId).then((res) => {
+        if (!data.user || !chainId) return;
+
+        fetchNFTs(data.user, chainId).then((res) => {
             setOwnedProducts(res);
         });
-    }, [account, chainId]);
+
+        getNftsByCreator(data.user).then(res => {
+            setCreatedProducts(res);
+        })
+    }, [data.user, chainId]);
 
     return (
         <div className={clsx("rn-authore-profile-area", className)}>
@@ -59,12 +66,12 @@ const AuthorProfileArea = ({ className, data }) => {
                                         >
                                             Created
                                         </Nav.Link>
-                                        <Nav.Link
+                                        {/* <Nav.Link
                                             as="button"
                                             eventKey="nav-liked"
                                         >
                                             Liked
-                                        </Nav.Link>
+                                        </Nav.Link> */}
                                     </Nav>
                                 </nav>
                             </div>
@@ -109,18 +116,17 @@ const AuthorProfileArea = ({ className, data }) => {
                                         title={prod.metadata.name}
                                         latestBid={prod.latestBid}
                                         price={prod.price}
-                                        likeCount={prod.likeCount}
                                         auction_date={prod.auction_date}
                                         image={prod.metadata.image}
                                         authors={prod.authors}
                                         bitCount={prod.bitCount}
+                                        likeCount={prod.likeCount}
                                         // new
                                         nftAddress={prod.contract.address}
                                         tokenId={prod.id.tokenId}
                                         tokenBalance={prod.balance}
-                                        slug={`${
-                                            prod.contract.address
-                                        }-${parseInt(prod.id.tokenId, 16)}`}
+                                        slug={`${prod.contract.address
+                                            }-${parseInt(prod.id.tokenId, 16)}`}
                                     />
                                 </div>
                             ))}
@@ -131,21 +137,26 @@ const AuthorProfileArea = ({ className, data }) => {
                         >
                             {createdProducts?.map((prod) => (
                                 <div
-                                    key={prod.id}
+                                    key={prod.name}
                                     className="col-5 col-lg-4 col-md-6 col-sm-6 col-12"
                                 >
                                     <Product
                                         overlay
                                         placeBid
-                                        title={prod.title}
-                                        slug={prod.slug}
                                         latestBid={prod.latestBid}
                                         price={prod.price}
-                                        likeCount={prod.likeCount}
                                         auction_date={prod.auction_date}
-                                        image={prod.images?.[0]}
                                         authors={prod.authors}
                                         bitCount={prod.bitCount}
+                                        //new
+                                        title={prod.title}
+                                        image={prod.image}
+                                        nftAddress={prod.address}
+                                        tokenId={prod.tokenId}
+                                        slug={`${prod.address
+                                            }-${parseInt(prod.tokenId, 16)}`}
+                                        tokenBalance={prod.amount}
+                                        likeCount={prod.likeCount}
                                     />
                                 </div>
                             ))}

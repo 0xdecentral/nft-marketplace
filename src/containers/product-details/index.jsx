@@ -117,8 +117,7 @@ const ProductDetailsArea = ({ space, className, product }) => {
                                 <h6 className="title-name">
                                     Owner:
                                     <a
-                                        href={`${getESLink(product.owner)}`}
-                                        target="_blank"
+                                        href={`/user/${product.owner}`}
                                         className="mx-2"
                                     >
                                         {formatAddress(product.owner)}

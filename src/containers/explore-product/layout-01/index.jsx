@@ -94,7 +94,6 @@ const ExploreProductArea = ({ className, space, data, hasFilter }) => {
         itemFilterHandler();
     }, [itemFilterHandler]);
 
-    console.log("I am data!!!!!", data);
     return (
         <div
             className={clsx(

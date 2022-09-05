@@ -163,7 +163,7 @@ const isEmpty = (obj) => {
     return true;
 };
 
-module.exports = {
+export {
     slideUp,
     slideDown,
     slideToggle,

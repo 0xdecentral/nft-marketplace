@@ -1,4 +1,4 @@
-import { convertToUnixTimestamp, currentUnixTimestamp } from "@utils/formatter";
+import { convertToUnixTimestamp, currentUnixTimestamp, isAddressSame } from "@utils/formatter";
 import { initializeApp } from "firebase/app";
 import {
     getFirestore,
@@ -187,15 +187,13 @@ export const createSubOrder = async (id, data) => {
     }
 };
 
-// export const updateNFT = (cid, data) => {
-//     const nftsRef = collection(db, "nfts");
+export const getNftsByCreator = async (creator) => {
+    const nftsRef = collection(db, "nfts");
 
-//     getDocs(nftsRef)
-//         .then((querySnapshot) => querySnapshot.docs)
-//         .then((nfts) => nfts.find((nft) => nft.data().metadataCID === cid))
-//         .then((item) =>
-//             updateDoc(item.ref, {
-//                 address: "123",
-//             })
-//         );
-// };
+    return getDocs(nftsRef)
+        .then((querySnapshot) => querySnapshot.docs)
+        .then((nfts) => nfts.filter((nft) => isAddressSame(nft.data().creator, creator)))
+        .then((items) =>
+            items.map(item => item.data())
+        );
+};

@@ -62,7 +62,7 @@ const TopSeller = ({
                             ? "Acution ended with "
                             : ""}
                         {eth && <>{formatTokenAmount(eth)}wETH by</>}
-                        <Anchor path={path}>{formatAddress(name)}</Anchor>
+                        <Anchor path={`/user/${name}`}>{formatAddress(name)}</Anchor>
                     </span>
                     {time && (
                         <span className="count-number">

@@ -8,6 +8,7 @@ import ShareModal from "@components/modals/share-modal";
 import Anchor from "@ui/anchor";
 import { useUser } from "src/contexts/UserContext";
 import tempAuthor from "../../data/author.json";
+import { formatAddress } from "@utils/address";
 
 const AuthorIntroArea = ({ className, space, data }) => {
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -62,9 +63,9 @@ const AuthorIntroArea = ({ className, space, data }) => {
                                         <h4 className="title">
                                             {data?.name
                                                 ? data.name
-                                                : data?.address}
+                                                : formatAddress(data?.address)}
                                         </h4>
-                                        <a
+                                        {/* <a
                                             href="https://twitter.com"
                                             target="_blank"
                                             rel="noreferrer"
@@ -102,7 +103,7 @@ const AuthorIntroArea = ({ className, space, data }) => {
                                                     </a>
                                                 </span>
                                             </div>
-                                        </div>
+                                        </div> */}
                                         <div className="author-button-area">
                                             <span className="btn at-follw follow-button">
                                                 <i className="feather-user-plus" />
